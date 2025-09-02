@@ -1,0 +1,8 @@
+torch
+transformers>=4.40.0
+Pillow>=10.0.0
+numpy
+tqdm
+fastapi
+uvicorn[standard]
+PyYAML>=6.0

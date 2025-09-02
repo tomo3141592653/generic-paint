@@ -1,0 +1,30 @@
+ga:
+  pop_size: 40
+  genes_min: 3000
+  genes_max: 3000
+  elitism: 5
+  tournament_k: 4
+  mutation_rate: 0.12
+  add_gene_prob: 0.01
+  remove_gene_prob: 0.01
+  crossover: elite_strategy
+  seed: 42
+render:
+  width: 256
+  height: 256
+run:
+  generations: 2
+  save_top_k: 6
+  out_dir: runs/config_test
+  batch_size: 16
+  render_workers: 8
+  save_freq: 100
+  show: false
+  show_top_k: 6
+model:
+  prompts:
+  - aesthetic curves
+  - smooth soft color gradients
+  model: openai/clip-vit-base-patch32
+  dummy: true
+  device: null
