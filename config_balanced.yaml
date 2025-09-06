@@ -1,0 +1,34 @@
+# バランス型設定
+# 品質と速度のバランスを取った設定
+
+ga:
+  pop_size: 30                    # 中程度の個体数
+  genes_min: 1000                 # 中程度の遺伝子数
+  genes_max: 1000
+  elitism: 4                      
+  tournament_k: 4
+  mutation_rate: 0.12
+  add_gene_prob: 0.01
+  remove_gene_prob: 0.01
+  crossover: "elite_strategy"
+  seed: 42
+
+render:
+  width: 256                      # 標準サイズ
+  height: 256
+
+run:
+  generations: 500                # 中期実験用
+  save_top_k: 5
+  out_dir: "runs/balanced_test"
+  batch_size: 12                  
+  render_workers: 6               
+  save_freq: 100
+  show: false
+  show_top_k: 5
+
+model:
+  prompts: ["1dog"]
+  model: "openai/clip-vit-base-patch32"
+  dummy: false
+  device: null

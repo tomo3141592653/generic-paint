@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+DEAP (Distributed Evolutionary Algorithms in Python)を使用したGA-CLIP絵画進化システム
+
+オリジナルのga_clip_engine.pyと同じ機能を持ちながら、
+DEAPライブラリの豊富な進化戦略とオペレータを活用
+"""
 from __future__ import annotations
 
 import os
@@ -9,9 +15,10 @@ import random
 import argparse
 import shutil
 from dataclasses import dataclass, asdict, field
-from typing import List, Tuple, Optional, Iterable
+from typing import List, Tuple, Optional, Iterable, Any
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+import copy
 
 try:
     import yaml
@@ -23,6 +30,15 @@ except ImportError:
 import numpy as np
 from PIL import Image, ImageDraw
 from tqdm import tqdm
+
+# DEAP imports
+try:
+    from deap import base, creator, tools, algorithms
+    import deap
+
+    _HAS_DEAP = True
+except ImportError:
+    _HAS_DEAP = False
 
 # For optional display
 try:
@@ -43,7 +59,7 @@ except Exception:
     _HAS_CLIP = False
 
 # =====================
-# Genome & Rendering
+# Genome & Rendering (既存のコードを再利用)
 # =====================
 
 SHAPE_TYPES = ("RECT", "ELLIPSE")
@@ -64,9 +80,8 @@ class Gene:
 
     @staticmethod
     def random(rng: random.Random) -> "Gene":
-        # 要素の大きさを指定している
-        w = max(0.01, rng.random() ** 2) * 0.1
-        h = max(0.01, rng.random() ** 2) * 0.1
+        w = max(0.02, rng.random() ** 2) * 0.9
+        h = max(0.02, rng.random() ** 2) * 0.9
         return Gene(
             shape_type=rng.choice(SHAPE_TYPES),
             x=rng.random(),
@@ -80,6 +95,37 @@ class Gene:
             a=rng.randint(30, 200),
         )
 
+    def to_list(self) -> List[float]:
+        """DEAP用にパラメータをリスト形式で返す"""
+        return [
+            float(SHAPE_TYPES.index(self.shape_type)),
+            self.x,
+            self.y,
+            self.w,
+            self.h,
+            self.z,
+            float(self.r),
+            float(self.g),
+            float(self.b),
+            float(self.a),
+        ]
+
+    @classmethod
+    def from_list(cls, values: List[float]) -> "Gene":
+        """リスト形式からGeneオブジェクトを作成"""
+        return cls(
+            shape_type=SHAPE_TYPES[int(values[0]) % len(SHAPE_TYPES)],
+            x=values[1],
+            y=values[2],
+            w=values[3],
+            h=values[4],
+            z=values[5],
+            r=int(values[6]),
+            g=int(values[7]),
+            b=int(values[8]),
+            a=int(values[9]),
+        )
+
 
 @dataclass
 class DNA:
@@ -88,6 +134,28 @@ class DNA:
     @staticmethod
     def random(gene_count: int, rng: random.Random) -> "DNA":
         return DNA(genes=[Gene.random(rng) for _ in range(gene_count)])
+
+    def to_individual(self) -> List[float]:
+        """DEAP個体（フラットなリスト）に変換"""
+        individual = []
+        for gene in self.genes:
+            individual.extend(gene.to_list())
+        return individual
+
+    @classmethod
+    def from_individual(
+        cls, individual: List[float], genes_per_individual: int
+    ) -> "DNA":
+        """DEAP個体からDNAオブジェクトを作成"""
+        genes = []
+        gene_size = 10  # Geneのパラメータ数
+        for i in range(0, len(individual), gene_size):
+            if len(genes) >= genes_per_individual:
+                break
+            gene_params = individual[i : i + gene_size]
+            if len(gene_params) == gene_size:
+                genes.append(Gene.from_list(gene_params))
+        return cls(genes=genes)
 
 
 class Renderer:
@@ -173,7 +241,7 @@ class Renderer:
 
 
 # =====================
-# CLIP Scorer
+# CLIP Scorer (既存のコードを再利用)
 # =====================
 
 
@@ -215,11 +283,7 @@ class CLIPScorer:
         if device:
             self.device = device
         elif torch.cuda.is_available():
-            # Check CUDA capability
-            import subprocess
-
             try:
-                # Try to use CUDA if available and compatible
                 self.device = "cuda"
                 print(f"Using GPU: {torch.cuda.get_device_name(0)}")
             except:
@@ -232,7 +296,6 @@ class CLIPScorer:
         model_kwargs = {}
         if self.use_fp16 and self.device == "cuda":
             model_kwargs["torch_dtype"] = torch.float16
-        # CLIP doesn't support SDPA yet, use eager attention
         model_kwargs["attn_implementation"] = "eager"
 
         self.model = CLIPModel.from_pretrained(model_name, **model_kwargs).to(
@@ -354,7 +417,7 @@ class DummyScorer:
 
 
 # =====================
-# GA Operators
+# Configuration (既存のコードを再利用)
 # =====================
 
 
@@ -363,17 +426,22 @@ class GAConfig:
     pop_size: int = 40
     genes_min: int = 3000
     genes_max: int = 3000
-    elitism: int = 5  # 上位5個体が生存
+    elitism: int = 5
     tournament_k: int = 4
-    mutation_rate: float = 0.12  # per-gene param mutation prob
-    add_gene_prob: float = 0.01  # 遺伝子数固定のため低く設定
-    remove_gene_prob: float = 0.01  # 遺伝子数固定のため低く設定
-    crossover: str = "elite_strategy"  # エリート優遇戦略
-    seed: Optional[int] = None  # Noneの場合はunix timeから自動生成
+    mutation_rate: float = 0.12
+    add_gene_prob: float = 0.01
+    remove_gene_prob: float = 0.01
+    crossover: str = "uniform"  # DEAP用に調整
+    mutation_strength: float = 0.1  # DEAP用パラメータ
+    crossover_prob: float = 0.8  # DEAP用パラメータ
+    mutation_prob: float = 0.2  # DEAP用パラメータ
+    seed: Optional[int] = None
 
     @classmethod
     def from_dict(cls, data: dict) -> "GAConfig":
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        # dataclassのフィールド名のリストを取得
+        field_names = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in field_names})
 
 
 @dataclass
@@ -383,14 +451,15 @@ class RenderConfig:
 
     @classmethod
     def from_dict(cls, data: dict) -> "RenderConfig":
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        field_names = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in field_names})
 
 
 @dataclass
 class RunConfig:
     generations: int = 30
     save_top_k: int = 6
-    out_dir: str = "runs/demo"
+    out_dir: str = "runs/demo_deap"
     batch_size: int = 16
     render_workers: int = 8
     save_freq: int = 100
@@ -399,7 +468,8 @@ class RunConfig:
 
     @classmethod
     def from_dict(cls, data: dict) -> "RunConfig":
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        field_names = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in field_names})
 
 
 @dataclass
@@ -413,7 +483,8 @@ class ModelConfig:
 
     @classmethod
     def from_dict(cls, data: dict) -> "ModelConfig":
-        return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
+        field_names = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in field_names})
 
 
 @dataclass
@@ -465,188 +536,141 @@ class Config:
             )
 
 
-class GeneticAlgorithm:
-    def __init__(self, ga_cfg: GAConfig, rnd: random.Random):
-        self.cfg = ga_cfg
-        self.rng = rnd
-
-    # ---- Selection ----
-    def _tournament(self, population: List[Tuple[DNA, float]]) -> DNA:
-        k = min(self.cfg.tournament_k, len(population))
-        subset = self.rng.sample(population, k)
-        subset.sort(key=lambda t: t[1], reverse=True)
-        return subset[0][0]
-
-    # ---- Crossover ----
-    def _crossover(self, a: DNA, b: DNA) -> DNA:
-        if self.cfg.crossover == "one_point":
-            cut = self.rng.randint(1, min(len(a.genes), len(b.genes)) - 1)
-            genes = a.genes[:cut] + b.genes[cut:]
-        else:
-            # uniform
-            max_len = max(len(a.genes), len(b.genes))
-            genes = []
-            for i in range(max_len):
-                pick_a = self.rng.random() < 0.5
-                if pick_a and i < len(a.genes):
-                    genes.append(a.genes[i])
-                elif not pick_a and i < len(b.genes):
-                    genes.append(b.genes[i])
-            if not genes:
-                genes = list(a.genes) or list(b.genes)
-        return DNA(genes=list(genes))
-
-    # ---- Mutation ----
-    def _mutate_gene_param(self, g: Gene) -> Gene:
-        def clip01(x):
-            return max(0.0, min(1.0, x))
-
-        def clip255(x):
-            return int(max(0, min(255, x)))
-
-        # Gaussian-like small jitters
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.x = clip01(g.x + self.rng.uniform(-0.07, 0.07))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.y = clip01(g.y + self.rng.uniform(-0.07, 0.07))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.w = clip01(g.w * (1.0 + self.rng.uniform(-0.25, 0.25)))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.h = clip01(g.h * (1.0 + self.rng.uniform(-0.25, 0.25)))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.z = clip01(g.z + self.rng.uniform(-0.2, 0.2))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.r = clip255(g.r + int(self.rng.uniform(-32, 32)))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.g = clip255(g.g + int(self.rng.uniform(-32, 32)))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.b = clip255(g.b + int(self.rng.uniform(-32, 32)))
-        if self.rng.random() < self.cfg.mutation_rate:
-            g.a = clip255(g.a + int(self.rng.uniform(-40, 40)))
-        if self.rng.random() < self.cfg.mutation_rate / 4.0:
-            g.shape_type = "RECT" if g.shape_type == "ELLIPSE" else "ELLIPSE"
-        return g
-
-    def _mutate(self, dna: DNA) -> DNA:
-        genes = [self._mutate_gene_param(Gene(**asdict(g))) for g in dna.genes]
-        # structural mutations
-        if (
-            self.rng.random() < self.cfg.add_gene_prob
-            and len(genes) < self.cfg.genes_max
-        ):
-            genes.append(Gene.random(self.rng))
-        if (
-            self.rng.random() < self.cfg.remove_gene_prob
-            and len(genes) > self.cfg.genes_min
-        ):
-            idx = self.rng.randrange(len(genes))
-            del genes[idx]
-        return DNA(genes=genes)
-
-    # ---- Next generation ----
-    def next_generation(self, population: List[Tuple[DNA, float]]) -> List[DNA]:
-        population.sort(key=lambda t: t[1], reverse=True)
-
-        if self.cfg.crossover == "elite_strategy":
-            return self._elite_strategy_generation(population)
-        else:
-            return self._standard_generation(population)
-
-    def _elite_strategy_generation(
-        self, population: List[Tuple[DNA, float]]
-    ) -> List[DNA]:
-        """エリート優遇戦略: 最上位個体が他のエリートと優先的に交配"""
-        # 上位5個体をエリートとして保存
-        elites = [
-            population[i][0] for i in range(min(self.cfg.elitism, len(population)))
-        ]
-        new_pop: List[DNA] = [
-            DNA(genes=[Gene(**asdict(g)) for g in e.genes]) for e in elites
-        ]
-
-        best_individual = elites[0] if elites else None
-
-        # 最上位個体が他の4個体と5回交配（合計20個体）
-        if best_individual and len(elites) > 1:
-            for other_elite in elites[1:]:  # 他の4個体
-                for _ in range(5):  # と5回交配
-                    if len(new_pop) >= self.cfg.pop_size:
-                        break
-                    child = self._elite_crossover(best_individual, other_elite)
-                    child = self._mutate(child)
-                    child = self._clamp_gene_count(child)
-                    new_pop.append(child)
-
-        # 残りはエリートからランダム選択で交配
-        elite_population = [
-            (dna, score) for dna, score in population[: self.cfg.elitism]
-        ]
-        while len(new_pop) < self.cfg.pop_size:
-            p1 = self._select_random_elite(elite_population)
-            p2 = self._select_random_elite(elite_population)
-            child = self._elite_crossover(p1, p2)
-            child = self._mutate(child)
-            child = self._clamp_gene_count(child)
-            new_pop.append(child)
-
-        return new_pop[: self.cfg.pop_size]
-
-    def _standard_generation(self, population: List[Tuple[DNA, float]]) -> List[DNA]:
-        """従来のトーナメント選択戦略"""
-        elites = [
-            population[i][0] for i in range(min(self.cfg.elitism, len(population)))
-        ]
-        new_pop: List[DNA] = [
-            DNA(genes=[Gene(**asdict(g)) for g in e.genes]) for e in elites
-        ]
-        while len(new_pop) < self.cfg.pop_size:
-            p1 = self._tournament(population)
-            p2 = self._tournament(population)
-            child = self._crossover(p1, p2)
-            child = self._mutate(child)
-            child = self._clamp_gene_count(child)
-            new_pop.append(child)
-        return new_pop[: self.cfg.pop_size]
-
-    def _select_random_elite(self, elite_population: List[Tuple[DNA, float]]) -> DNA:
-        """エリートからランダム選択"""
-        return self.rng.choice(elite_population)[0]
-
-    def _elite_crossover(self, parent1: DNA, parent2: DNA) -> DNA:
-        """エリート用の交配: 3000個の遺伝子を被りなく選択"""
-        target_gene_count = self.cfg.genes_min  # 3000
-        all_genes = parent1.genes + parent2.genes
-
-        if len(all_genes) >= target_gene_count:
-            selected_genes = self.rng.sample(all_genes, target_gene_count)
-        else:
-            # 不足分はランダム生成
-            selected_genes = all_genes[:]
-            while len(selected_genes) < target_gene_count:
-                selected_genes.append(Gene.random(self.rng))
-
-        return DNA(genes=selected_genes)
-
-    def _clamp_gene_count(self, dna: DNA) -> DNA:
-        """遺伝子数を[min,max]に制限"""
-        if len(dna.genes) < self.cfg.genes_min:
-            dna.genes.extend(
-                [
-                    Gene.random(self.rng)
-                    for _ in range(self.cfg.genes_min - len(dna.genes))
-                ]
-            )
-        if len(dna.genes) > self.cfg.genes_max:
-            dna.genes = dna.genes[: self.cfg.genes_max]
-        return dna
-
-
 # =====================
-# Engine (FastAPI-friendly)
+# DEAP Setup and Operators
 # =====================
 
 
-class Engine:
+def setup_deap(ga_config: GAConfig, gene_count: int):
+    """DEAP環境の初期化"""
+    if not _HAS_DEAP:
+        raise RuntimeError("DEAP not available. Install with: pip install deap")
+
+    # クリーンアップ（既存の定義を削除）
+    if hasattr(creator, "FitnessMax"):
+        del creator.FitnessMax
+    if hasattr(creator, "Individual"):
+        del creator.Individual
+
+    # フィットネス関数の定義（最大化問題）
+    creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+
+    # 個体の定義（フラットなリスト）
+    creator.create("Individual", list, fitness=creator.FitnessMax)
+
+    # Toolboxの設定
+    toolbox = base.Toolbox()
+
+    # 遺伝子のパラメータ数
+    gene_param_count = 10  # Gene のパラメータ数
+    individual_size = gene_count * gene_param_count
+
+    # 個体の初期化
+    def create_individual():
+        # ランダムなDNAを作成し、個体に変換
+        dna = DNA.random(gene_count, random.Random())
+        return creator.Individual(dna.to_individual())
+
+    toolbox.register("individual", create_individual)
+    toolbox.register("population", tools.initRepeat, list, toolbox.individual)
+
+    # 変異オペレータ
+    def mutate_individual(individual, mutation_rate=0.1):
+        """個体の変異"""
+        gene_param_count = 10
+        gene_count = len(individual) // gene_param_count
+
+        for i in range(0, len(individual), gene_param_count):
+            if i + gene_param_count > len(individual):
+                break
+
+            # 各遺伝子パラメータに対して変異を適用
+            gene_params = individual[i : i + gene_param_count]
+
+            # shape_type (0)
+            if random.random() < mutation_rate / 4.0:
+                gene_params[0] = float(random.randint(0, len(SHAPE_TYPES) - 1))
+
+            # x, y (1, 2) - 位置
+            if random.random() < mutation_rate:
+                gene_params[1] = max(
+                    0.0, min(1.0, gene_params[1] + random.uniform(-0.07, 0.07))
+                )
+            if random.random() < mutation_rate:
+                gene_params[2] = max(
+                    0.0, min(1.0, gene_params[2] + random.uniform(-0.07, 0.07))
+                )
+
+            # w, h (3, 4) - サイズ
+            if random.random() < mutation_rate:
+                gene_params[3] = max(
+                    0.01, min(1.0, gene_params[3] * (1.0 + random.uniform(-0.25, 0.25)))
+                )
+            if random.random() < mutation_rate:
+                gene_params[4] = max(
+                    0.01, min(1.0, gene_params[4] * (1.0 + random.uniform(-0.25, 0.25)))
+                )
+
+            # z (5) - 深度
+            if random.random() < mutation_rate:
+                gene_params[5] = max(
+                    0.0, min(1.0, gene_params[5] + random.uniform(-0.2, 0.2))
+                )
+
+            # r, g, b, a (6, 7, 8, 9) - 色
+            if random.random() < mutation_rate:
+                gene_params[6] = max(
+                    0.0, min(255.0, gene_params[6] + random.uniform(-32, 32))
+                )
+            if random.random() < mutation_rate:
+                gene_params[7] = max(
+                    0.0, min(255.0, gene_params[7] + random.uniform(-32, 32))
+                )
+            if random.random() < mutation_rate:
+                gene_params[8] = max(
+                    0.0, min(255.0, gene_params[8] + random.uniform(-32, 32))
+                )
+            if random.random() < mutation_rate:
+                gene_params[9] = max(
+                    30.0, min(200.0, gene_params[9] + random.uniform(-40, 40))
+                )
+
+            # 更新
+            individual[i : i + gene_param_count] = gene_params
+
+        return (individual,)
+
+    # 交叉オペレータ
+    def crossover_two_point(ind1, ind2):
+        """2点交叉"""
+        size = min(len(ind1), len(ind2))
+        if size < 2:
+            return ind1, ind2
+
+        pt1 = random.randint(1, size - 1)
+        pt2 = random.randint(1, size - 1)
+        if pt1 > pt2:
+            pt1, pt2 = pt2, pt1
+
+        ind1[pt1:pt2], ind2[pt1:pt2] = ind2[pt1:pt2], ind1[pt1:pt2]
+        return ind1, ind2
+
+    # オペレータの登録
+    toolbox.register("mate", crossover_two_point)
+    toolbox.register("mutate", mutate_individual, mutation_rate=ga_config.mutation_rate)
+    toolbox.register("select", tools.selTournament, tournsize=ga_config.tournament_k)
+
+    return toolbox
+
+
+# =====================
+# DEAP Engine
+# =====================
+
+
+class DEAPEngine:
+    """DEAP を使用した進化エンジン"""
+
     def __init__(
         self,
         ga_cfg: GAConfig,
@@ -662,84 +686,141 @@ class Engine:
             seed = int(time.time())
             print(f"Auto-generated seed from unix time: {seed}")
         self.actual_seed = seed
-        self.rng = random.Random(seed)
+        random.seed(seed)
+        np.random.seed(seed)
+
+        self.ga_cfg = ga_cfg
         self.verbose = verbose
         self.renderer = Renderer(render_cfg.width, render_cfg.height, verbose=verbose)
-        self.ga = GeneticAlgorithm(ga_cfg, self.rng)
+
+        # DEAP setup
+        self.gene_count = ga_cfg.genes_min
+        self.toolbox = setup_deap(ga_cfg, self.gene_count)
+
+        # 統計情報
+        self.stats = tools.Statistics(lambda ind: ind.fitness.values)
+        self.stats.register("avg", np.mean)
+        self.stats.register("std", np.std)
+        self.stats.register("min", np.min)
+        self.stats.register("max", np.max)
+
+        # Hall of Fame（最優秀個体の保存）
+        self.hof = tools.HallOfFame(1)
+
+        # 集団の初期化
+        self.population = self.toolbox.population(n=ga_cfg.pop_size)
+
+        # CLIP Scorer
+        if dummy or not _HAS_CLIP:
+            self.scorer = DummyScorer(seed=seed)
+        else:
+            self.scorer = CLIPScorer(model_name=scorer_model, verbose=verbose)
+        self.set_prompts(prompts)
+
+        self.generation = 0
         self.timing_stats = {
             "evaluate_total": 0.0,
             "evaluate_count": 0,
             "step_total": 0.0,
             "step_count": 0,
         }
-        self.population: List[DNA] = [
-            DNA.random(
-                self.ga.cfg.genes_min
-                + self.rng.randint(
-                    0, max(0, self.ga.cfg.genes_max - self.ga.cfg.genes_min)
-                ),
-                self.rng,
-            )
-            for _ in range(self.ga.cfg.pop_size)
-        ]
-        if dummy or not _HAS_CLIP:
-            self.scorer = DummyScorer(seed=seed)
-        else:
-            self.scorer = CLIPScorer(model_name=scorer_model, verbose=verbose)
-        self.set_prompts(prompts)
-        self.generation = 0
-        self.best: Optional[Tuple[DNA, float]] = None
-        self.last_saved_score: Optional[float] = None
+
+        # 最初の評価
+        self.evaluate_population()
 
     def set_prompts(self, prompts: List[str]):
         self.prompts = list(prompts)
         self.scorer.set_prompts(self.prompts)
 
-    def evaluate(
-        self, batch_size: int = 16, render_workers: int = 4
-    ) -> List[Tuple[DNA, float]]:
+    def individual_to_dna(self, individual) -> DNA:
+        """DEAP個体をDNAオブジェクトに変換"""
+        return DNA.from_individual(individual, self.gene_count)
+
+    def evaluate_population(self, batch_size: int = 16, render_workers: int = 4):
+        """集団全体の評価"""
         start_time = time.time()
 
-        # Parallel rendering
-        render_start = time.time()
-        images = self.renderer.render_batch(self.population, n_workers=render_workers)
-        render_time = time.time() - render_start
+        # 未評価の個体のみを評価
+        invalid_ind = [ind for ind in self.population if not ind.fitness.valid]
 
-        # CLIP scoring
-        score_start = time.time()
-        scores = self.scorer.score(images, batch_size=batch_size)
-        score_time = time.time() - score_start
+        if invalid_ind:
+            # DNAに変換
+            dnas = [self.individual_to_dna(ind) for ind in invalid_ind]
 
-        pop_scored = list(zip(self.population, scores.tolist()))
-        # track best
-        pop_scored.sort(key=lambda t: t[1], reverse=True)
-        if self.best is None or pop_scored[0][1] > self.best[1]:
-            self.best = (pop_scored[0][0], pop_scored[0][1])
+            # レンダリング
+            render_start = time.time()
+            images = self.renderer.render_batch(dnas, n_workers=render_workers)
+            render_time = time.time() - render_start
+
+            # CLIP評価
+            score_start = time.time()
+            scores = self.scorer.score(images, batch_size=batch_size)
+            score_time = time.time() - score_start
+
+            # フィットネス値を設定
+            for ind, score in zip(invalid_ind, scores):
+                ind.fitness.values = (float(score),)
+
+        # 統計更新
+        record = self.stats.compile(self.population)
+        self.hof.update(self.population)
 
         end_time = time.time()
         total_time = end_time - start_time
         self.timing_stats["evaluate_total"] += total_time
         self.timing_stats["evaluate_count"] += 1
 
-        if self.verbose:
+        if self.verbose and invalid_ind:
             print(f"Evaluate gen {self.generation}:")
+            print(f"  Evaluated {len(invalid_ind)} individuals")
             print(f"  Render time: {render_time:.4f}s")
             print(f"  CLIP time: {score_time:.4f}s")
             print(f"  Total time: {total_time:.4f}s")
-            print(f"  Best score: {pop_scored[0][1]:.4f}")
+            print(f"  Stats: {record}")
 
-        return pop_scored
+        return record
 
     def step(self, batch_size: int = 16, render_workers: int = 4):
+        """1世代の進化ステップ"""
         start_time = time.time()
 
-        scored = self.evaluate(batch_size=batch_size, render_workers=render_workers)
+        # 選択
+        offspring = self.toolbox.select(self.population, len(self.population))
+        offspring = [self.toolbox.clone(ind) for ind in offspring]
 
-        ga_start = time.time()
-        self.population = self.ga.next_generation(scored)
-        ga_time = time.time() - ga_start
+        # 交叉
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() < self.ga_cfg.crossover_prob:
+                self.toolbox.mate(child1, child2)
+                del child1.fitness.values
+                del child2.fitness.values
 
+        # 変異
+        for mutant in offspring:
+            if random.random() < self.ga_cfg.mutation_prob:
+                self.toolbox.mutate(mutant)
+                del mutant.fitness.values
+
+        # エリート保存
+        if self.ga_cfg.elitism > 0:
+            # 現在の集団をスコアでソート
+            sorted_pop = sorted(
+                self.population, key=lambda x: x.fitness.values[0], reverse=True
+            )
+            elites = sorted_pop[: self.ga_cfg.elitism]
+
+            # エリートを次世代に含める
+            offspring[-self.ga_cfg.elitism :] = [
+                self.toolbox.clone(elite) for elite in elites
+            ]
+
+        self.population[:] = offspring
         self.generation += 1
+
+        # 評価
+        record = self.evaluate_population(
+            batch_size=batch_size, render_workers=render_workers
+        )
 
         end_time = time.time()
         step_time = end_time - start_time
@@ -747,10 +828,30 @@ class Engine:
         self.timing_stats["step_count"] += 1
 
         if self.verbose:
-            print(f"  GA time: {ga_time:.4f}s")
             print(f"  Step total: {step_time:.4f}s")
 
+        return record
+
+    def get_scored_population(self) -> List[Tuple[DNA, float]]:
+        """現在の集団をスコア付きで返す"""
+        scored = []
+        for ind in self.population:
+            dna = self.individual_to_dna(ind)
+            score = ind.fitness.values[0] if ind.fitness.valid else 0.0
+            scored.append((dna, score))
+
+        # スコアでソート
+        scored.sort(key=lambda x: x[1], reverse=True)
         return scored
+
+    def get_best(self) -> Optional[Tuple[DNA, float]]:
+        """最優秀個体を返す"""
+        if self.hof:
+            best_ind = self.hof[0]
+            best_dna = self.individual_to_dna(best_ind)
+            best_score = best_ind.fitness.values[0]
+            return (best_dna, best_score)
+        return None
 
     def get_timing_stats(self):
         """Get comprehensive timing statistics"""
@@ -777,11 +878,12 @@ class Engine:
         return stats
 
     # --- Saving helpers ---
-    def save_generation(
-        self, scored: List[Tuple[DNA, float]], out_dir: str, top_k: int = 6
-    ):
+    def save_generation(self, out_dir: str, top_k: int = 6):
+        """世代の保存"""
+        scored = self.get_scored_population()
         gen_dir = os.path.join(out_dir, f"gen_{self.generation:03d}")
         os.makedirs(gen_dir, exist_ok=True)
+
         # Save top-k images + genomes
         for i, (dna, score) in enumerate(scored[:top_k]):
             img = self.renderer.render(dna)
@@ -795,6 +897,7 @@ class Engine:
                     ensure_ascii=False,
                     indent=2,
                 )
+
         # Save brief metrics
         metrics = {
             "generation": self.generation,
@@ -808,18 +911,13 @@ class Engine:
             json.dump(metrics, f, ensure_ascii=False, indent=2)
 
     def save_best(self, out_dir: str):
-        if not self.best:
+        """最優秀個体の保存"""
+        best = self.get_best()
+        if not best:
             return
 
-        dna, score = self.best
+        dna, score = best
         score_str = f"{score:.4f}"
-
-        # スコアが前回と同じ場合はスキップ
-        if (
-            self.last_saved_score is not None
-            and f"{self.last_saved_score:.4f}" == score_str
-        ):
-            return
 
         best_dir = os.path.join(out_dir, "best")
         os.makedirs(best_dir, exist_ok=True)
@@ -840,17 +938,14 @@ class Engine:
                 indent=2,
             )
 
-        # 保存したスコアを記録
-        self.last_saved_score = score
-
 
 # =====================
-# Display Helper
+# Display Helper (既存のコードを再利用)
 # =====================
 
 
 class EvolutionDisplay:
-    def __init__(self, engine: Engine, show_top_k: int = 6):
+    def __init__(self, engine: DEAPEngine, show_top_k: int = 6):
         if not _HAS_DISPLAY:
             raise RuntimeError(
                 "matplotlib not available. Install matplotlib to use display."
@@ -913,7 +1008,7 @@ class EvolutionDisplay:
 
 
 # =====================
-# Helper Functions
+# Helper Functions (既存のコードを再利用)
 # =====================
 
 
@@ -991,7 +1086,9 @@ def handle_existing_output_dir(
 
 
 def main():
-    p = argparse.ArgumentParser(description="Evolve abstract images scored by CLIP.")
+    p = argparse.ArgumentParser(
+        description="Evolve abstract images scored by CLIP using DEAP."
+    )
     p.add_argument("--config", type=str, help="path to YAML config file")
     p.add_argument(
         "--create-config",
@@ -1027,6 +1124,12 @@ def main():
     )
     args = p.parse_args()
 
+    # Check DEAP availability
+    if not _HAS_DEAP:
+        print("Error: DEAP library is required but not installed.")
+        print("Install with: pip install deap")
+        return
+
     # Create default config if requested
     if args.create_config:
         config = Config()  # Default config
@@ -1057,18 +1160,20 @@ def main():
         config.model.dummy = True
 
     print(f"config: {config}")
+
     # Use configs from loaded/default config
     ga_cfg = config.ga
     render_cfg = config.render
 
-    # Init engine
-    engine = Engine(
+    # Init DEAP engine
+    engine = DEAPEngine(
         ga_cfg=ga_cfg,
         render_cfg=render_cfg,
         prompts=config.model.prompts,
         seed=ga_cfg.seed,  # Noneの場合はEngine内でunix timeから自動生成
         scorer_model=config.model.model,
         dummy=config.model.dummy,
+        verbose=True,
     )
 
     out = config.run.out_dir
@@ -1087,6 +1192,12 @@ def main():
         config.to_file(config_dest)
         print(f"Config saved to: {config_dest}")
 
+    # Save actual used seed for reproducibility
+    config.ga.seed = engine.actual_seed
+    config_with_seed_dest = os.path.join(out, "config_with_actual_seed.yaml")
+    config.to_file(config_with_seed_dest)
+    print(f"Config with actual seed saved to: {config_with_seed_dest}")
+
     # Setup display if requested
     display = None
     if config.run.show:
@@ -1099,27 +1210,26 @@ def main():
             display = EvolutionDisplay(engine, show_top_k=config.run.show_top_k)
 
     # Save initial random population top-k (generation 0)
-    scored = engine.evaluate(
-        batch_size=config.run.batch_size, render_workers=config.run.render_workers
-    )
-    # Save generation 0 (always save initial)
-    engine.save_generation(scored, out_dir=out, top_k=config.run.save_top_k)
+    scored = engine.get_scored_population()
+    engine.save_generation(out_dir=out, top_k=config.run.save_top_k)
     engine.save_best(out)
 
     if display:
         display.update(scored)
 
     # Evolve
-    for gen in tqdm(range(config.run.generations), desc="Evolving"):
-        scored = engine.step(
+    for gen in tqdm(range(config.run.generations), desc="Evolving with DEAP"):
+        record = engine.step(
             batch_size=config.run.batch_size, render_workers=config.run.render_workers
         )
+
+        scored = engine.get_scored_population()
 
         # Save every save_freq generations, or if it's the last generation
         if (engine.generation % config.run.save_freq == 0) or (
             gen == config.run.generations - 1
         ):
-            engine.save_generation(scored, out_dir=out, top_k=config.run.save_top_k)
+            engine.save_generation(out_dir=out, top_k=config.run.save_top_k)
 
         # Always update best (lightweight operation)
         engine.save_best(out)
@@ -1128,6 +1238,19 @@ def main():
             display.update(scored)
 
     print("Done. Results in:", out)
+    print(
+        f"Best score achieved: {engine.get_best()[1]:.4f}"
+        if engine.get_best()
+        else "No best score"
+    )
+
+    # Print timing statistics
+    stats = engine.get_timing_stats()
+    print("\nTiming Statistics:")
+    print(
+        f"  Average evaluate time: {stats['engine'].get('avg_evaluate_time', 0):.4f}s"
+    )
+    print(f"  Average step time: {stats['engine'].get('avg_step_time', 0):.4f}s")
 
     if display:
         display.close()

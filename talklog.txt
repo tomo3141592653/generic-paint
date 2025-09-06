@@ -1,0 +1,1028 @@
+伝アルゴリズムでエッチな絵を描こうという試みあったの覚えてますか？判定機が人間の投票のやつ。
+ChatGPT:
+
+はい、まさにそのプロジェクトです！「遺伝的アルゴリズムで最高にエッチな画像を作ろう！」という試みですね。ご記憶の通り、人間が「どちらがエッチか？」と2 枚の画像から直感で選ぶ投票を繰り返し、それを “適応度” として進化させていくインタラクティブな遺伝的アルゴリズムの実験でした
+Reddit
++10
+ねとらぼ
++10
+gamingchahan.com
++10
+。
+
+試みの概要
+
+仕組み
+ランダムに生成された図形（長方形・楕円形など）から構成される画像を2 枚表示し、どちらが「エッチ」かを閲覧者が選択。その勝敗に基づいて「よりエッチ」と評価された画像の特徴を次世代に継承し、進化させていく形式です。
+gamingchahan.com
+note（ノート）
+
+投票と世代の仕組み
+各世代あたり2000回の投票（一対一の比較）で競わせ、勝った画像を親として進化。形質（位置、色、透明度、図形タイプなど）を組み合わせて新たな画像を生成します。
+note（ノート）
++3
+kris.fail
++3
+ねとらぼ
++3
+
+進化の様子
+初期はモザイクのような抽象的画像でしたが、2000世代を超えると中央に肌色のパーツが目立ち始め、乳房のような印象へと進化。最終的には1万世代を突破し、Google AdSenseから「性的に露骨なコンテンツ」と判断され広告が停止されるまでに至りました。
+ねとらぼ
++3
+note（ノート）
++3
+note（ノート）
++3
+
+実験の目的とゴール
+制作者の群青ちきん氏は、広告審査でセクシャルな表現と判断されるレベルに進化させることを「勝利」と定義。実際に約1カ月、1万世代ほどで広告が停止され、“ゴール達成”となりました。
+note（ノート）
++3
+ねとらぼ
++3
+ねとらぼ
++3
+
+運営上の問題
+最終的にはボットによる不正な投票操作や画像生成の介入もあったとされ、企画は中止となりました。
+kris.fail
+note（ノート）
+
+振り返ってのまとめ
+
+この実験は、進化論的アルゴリズムと人間の「エロい」と感じる感覚を組み合わせたユニークなアート＆社会実験でした。投票という手法により一般的な美意識や快楽感覚を遺伝的アルゴリズムに反映し、多くの参加者の「好み」がカタチとなって現れていくさまは、まさに民主主義と進化論の融合といった趣です
+m-dojo.hatenadiary.com
+。
+
+とても印象深いプロジェクトでしたね！他にも似たような試みや興味ある話があれば、ぜひ聞かせてください。
+
+情報源
+あなた:
+これ再現実験したいんだけど、コードって公開されてますかね？遺伝子→画像の箇所を特に知りたくて
+ChatGPT:
+思考時間: 23s
+
+ざっくり結論から：
+
+元の「遺伝的アルゴリズムで最高にエッチな画像を作ろう！」について、公式のソースコード公開は見当たりません（企画ページと解説・取材記事はあるが、コードへのリンクなし）。
+gamingchahan.com
+ねとらぼ
+note（ノート）
+
+ただし、同じ「遺伝子→画像」方式（多角形／楕円などの図形を遺伝子として並べ、レンダリングして評価）を採る公開実装は複数あります。特に Kenny Cason 氏の genetic_draw（Kotlin）は、図形の属性を遺伝子としてエンコード→画像レンダ→適応度評価まで一式そろっており、今回の再現に一番近い参考資料になります。
+Kenny Cason
+GitHub
+
+再現の要点（遺伝子 → 画像）
+
+元企画の説明と近い形で、1枚の画像 = 多数の図形（長方形/楕円…）の合成、1図形 = 位置・大きさ・色・透明度・形種を持つ遺伝子、とするのが王道です。
+gamingchahan.com
+
+遺伝子表現（例）
+
+個体（DNA）= 図形の配列（例：300〜3000個）
+
+図形 gene =
+
+shape_type（rect / ellipse …）
+
+x, y, w, h, z（描画位置/サイズ/重なり順）
+
+r, g, b, a（色と透明度）
+
+この考え方は genetic_draw の README/日本語解説に明記されています。
+Kenny Cason
+GitHub
+
+レンダリング
+
+空のキャンバスを作る → 遺伝子配列を z順にソート → 先頭から順に図形を描画（アルファ合成）。
+
+最終的に得られたビットマップが表現型（phenotype）。
+Kenny Cason
+
+進化（今回の“判定機＝人間投票”に合わせる）
+
+適応度は2枚のうちどちらが“よりエッチ”かの勝率（一対比較）で置き換える。
+
+上位個体をエリート保存しつつ、親選択→交叉（図形リストのランダムマージ）→突然変異（図形の属性を確率的に摂動／図形の追加削除）で次世代を生成。この流れは公開実装の二親GAとほぼ同じ思想です。
+gamingchahan.com
+GitHub
+
+参考になる公開実装・資料
+
+Kenny Cason / genetic_draw（Kotlin）
+遺伝子＝多角形の並び、色・位置・透明度・z含む。Single/Population の2方式やエリート主義・交叉・突然変異が具体コードで見られる。遺伝子→画像のレンダリング＆適応度評価の実装がそのまま参考になる。
+GitHub
+Kenny Cason
+
+GARI（Python, PyGAD）：ピクセルを直接進化させる系（形ベースではないが、画像表現のGA実装例）。
+GitHub
+
+genetic_image_approximation / genetic-drawing 等（Python ほか）：ランダム形状で目標画像へ近づける実装例。レンダリングまわりの実装が参考。
+GitHub
++1
+
+元企画のパラメータ（公表値）：個体数・図形数・突然変異率・試合回数などの目安が載っている（コードではないが設計の指針に）。
+gamingchahan.com
+
+最小実装の骨子（擬似コード）
+
+あなたが知りたい「遺伝子→画像」だけに絞ると、実装は以下のとおりです（擬似コード）：
+
+class Gene:
+  shape_type ∈ {RECT, ELLIPSE}
+  x, y, w, h, z ∈ [0..1]         # 画像サイズに対する正規化
+  r, g, b ∈ [0..255]
+  a ∈ [0..1]
+
+class DNA:
+  genes: List[Gene]              # 例: 1000個
+
+function render(dna: DNA, W, H):
+  img = new RGBAImage(W, H, transparent)
+  for gene in sort_by(dna.genes, key=z):
+    draw_shape(img, gene.shape_type,
+               x=gene.x*W, y=gene.y*H,
+               w=gene.w*W, h=gene.h*H,
+               color=rgba(gene.r, gene.g, gene.b, gene.a))
+  return img
+
+
+交叉：親A/Bの genes からランダムに交互取り（または一様交叉）で新しい genes を構成。
+
+突然変異：低確率で一つの gene のパラメータ（例：x,y,w,h,r,g,b,a,z のいずれか）をガウスノイズ等で摂動、あるいは図形の追加/削除。
+
+投票UI：常に2個体 i,j を描画→ユーザが1クリックで勝者を選ぶ→勝者の勝率を記録→世代末に勝率順で選択。
+
+この設計は元サイトの説明と genetic_draw の実装方針に沿っています（図形ベース、z順レンダ、突然変異・交叉）。
+gamingchahan.com
+GitHub
+
+補足（倫理・運用メモ）
+
+公開運用時は不正投票（ボット）対策（レート制限・CSRF対策・クッキー/指紋の軽チェックなど）が必要。過去の企画でも“介入”が問題化し終了に至っています。
+note（ノート）
+
+広告やSNS連携はプラットフォームのポリシーに抵触しやすい点に注意。元企画も AdSense 側で制限がかかった経緯があります。
+note（ノート）
+
+必要なら、この設計をベースに最小構成の Python/TypeScript（Canvas/SVG）実装をその場で書き起こします。どのスタック（Python/Pillow、WebGL/Canvas、Kotlin/Processing など）が良いですか？
+
+情報源
+あなた:
+パイソンで書き直し、初期ランダム画像見せて
+ChatGPT:
+分析が終了しました
+常に詳細を表示する
+# Genetic Algorithm "gene -> image" minimal Python renderer
+# Generates an initial random population and shows the images.
+# Files are saved under /mnt/data so you can download them.
+
+from dataclasses import dataclass, asdict
+from typing import List
+import random, os, time, json, zipfile
+
+from PIL import Image, ImageDraw
+import numpy as np
+import matplotlib.pyplot as plt
+
+# -------- Parameters (feel free to tweak) --------
+SEED = 42
+POP_SIZE = 8            # number of individuals to render
+GENE_COUNT = 120        # number of shapes per individual
+CANVAS_SIZE = (256, 256)
+SHAPE_TYPES = ("RECT", "ELLIPSE")
+
+random.seed(SEED)
+
+@dataclass
+class Gene:
+    shape_type: str   # "RECT" or "ELLIPSE"
+    x: float          # 0..1
+    y: float          # 0..1
+    w: float          # 0..1 (relative width)
+    h: float          # 0..1 (relative height)
+    z: float          # 0..1 (draw order)
+    r: int            # 0..255
+    g: int            # 0..255
+    b: int            # 0..255
+    a: int            # 0..255 (alpha)
+
+@dataclass
+class DNA:
+    genes: List[Gene]
+
+def random_gene() -> Gene:
+    # Random size biased a bit smaller so it's not all giant blocks
+    w = max(0.02, random.random() ** 2) * 0.9
+    h = max(0.02, random.random() ** 2) * 0.9
+    return Gene(
+        shape_type=random.choice(SHAPE_TYPES),
+        x=random.random(),
+        y=random.random(),
+        w=w,
+        h=h,
+        z=random.random(),
+        r=random.randint(0, 255),
+        g=random.randint(0, 255),
+        b=random.randint(0, 255),
+        a=random.randint(30, 200)  # semi-transparent by default
+    )
+
+def random_dna(gene_count: int) -> DNA:
+    return DNA(genes=[random_gene() for _ in range(gene_count)])
+
+def draw_shape_on(img: Image.Image, gene: Gene):
+    """Alpha-blended drawing using a temporary layer for correct compositing."""
+    W, H = img.size
+    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer, "RGBA")
+    # convert normalized coords to pixel box
+    cx = int(gene.x * W)
+    cy = int(gene.y * H)
+    ww = int(gene.w * W)
+    hh = int(gene.h * H)
+    x0 = cx - ww // 2
+    y0 = cy - hh // 2
+    x1 = x0 + ww
+    y1 = y0 + hh
+    color = (gene.r, gene.g, gene.b, gene.a)
+    if gene.shape_type == "RECT":
+        draw.rectangle([x0, y0, x1, y1], fill=color)
+    else:  # ELLIPSE
+        draw.ellipse([x0, y0, x1, y1], fill=color)
+    img.alpha_composite(layer)
+
+def render_dna(dna: DNA, size=(256, 256)) -> Image.Image:
+    img = Image.new("RGBA", size, (0, 0, 0, 0))
+    # draw in ascending z (back to front)
+    for gene in sorted(dna.genes, key=lambda g: g.z):
+        draw_shape_on(img, gene)
+    return img
+
+# ----- Generate initial population -----
+population = [random_dna(GENE_COUNT) for _ in range(POP_SIZE)]
+
+# ----- Render and save -----
+run_dir = f"/mnt/data/ga_init_{int(time.time())}"
+os.makedirs(run_dir, exist_ok=True)
+
+image_paths = []
+genomes = []
+for i, dna in enumerate(population):
+    img = render_dna(dna, size=CANVAS_SIZE)
+    path = os.path.join(run_dir, f"individual_{i+1:02d}.png")
+    img.save(path)
+    image_paths.append(path)
+    genomes.append({
+        "id": i+1,
+        "genes": [asdict(g) for g in dna.genes]
+    })
+
+# Save genomes JSON for reproducibility
+genome_json_path = os.path.join(run_dir, "genomes.json")
+with open(genome_json_path, "w", encoding="utf-8") as f:
+    json.dump({"canvas_size": CANVAS_SIZE, "population": genomes}, f, ensure_ascii=False, indent=2)
+
+# Zip everything for easy download
+zip_path = "/mnt/data/ga_initial_population.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+    for p in image_paths:
+        zf.write(p, arcname=os.path.basename(p))
+    zf.write(genome_json_path, arcname=os.path.basename(genome_json_path))
+
+# ----- Display grid -----
+n = len(image_paths)
+cols = 4 if n >= 4 else n
+rows = int(np.ceil(n / cols))
+fig, axes = plt.subplots(rows, cols, figsize=(cols*3, rows*3))
+if rows == 1 and cols == 1:
+    axes = np.array([[axes]])
+elif rows == 1:
+    axes = np.array([axes])
+elif cols == 1:
+    axes = axes[:, np.newaxis]
+
+for idx in range(rows*cols):
+    ax = axes[idx // cols, idx % cols]
+    if idx < n:
+        img = Image.open(image_paths[idx]).convert("RGBA")
+        ax.imshow(img)
+        ax.set_title(f"Individual {idx+1}", fontsize=10)
+    ax.axis("off")
+
+plt.tight_layout()
+plt.show()
+
+zip_path, run_dir, image_paths[:2]
+
+結果
+('/mnt/data/ga_initial_population.zip',
+ '/mnt/data/ga_init_1756175673',
+ ['/mnt/data/ga_init_1756175673/individual_01.png',
+  '/mnt/data/ga_init_1756175673/individual_02.png'])
+Individual 8
+
+初期ランダム個体（8枚）、出しました！
+画像と遺伝子（genomes.json）は一式zipでも置いてあります。
+
+初期個体 一式 ZIP
+
+画像フォルダ（例）: /mnt/data/ga_init_1756175673/
+
+individual_01.png
+
+individual_02.png
+
+上の実装は「遺伝子→画像」部分を最小構成で書いています：
+
+遺伝子（Gene）= 図形タイプ（長方形/楕円）＋位置/サイズ/重なり順z＋RGBA
+
+個体（DNA）= Geneの配列
+
+レンダリング = z順に1枚ずつアルファ合成していく
+
+カスタムしたければ、コード冒頭のパラメータを変えてください：
+
+POP_SIZE（個体数）、GENE_COUNT（図形数）、CANVAS_SIZE（解像度）
+
+次は「2枚を並べて投票→勝率で適応度→選択・交叉・突然変異」のループを足せば、インタラクティブGA化できます。
+続き（投票UI／進化ループ）もこのままPythonで組みますか？ 
+
+あなた:
+私、これをCLIPで評価し投票部分を自動化しようと思う。夏休みの自由研究によくないですか？
+ChatGPT:
+
+それ、めちゃくちゃ面白いですし、自由研究としても**「AI × 進化アルゴリズム × 画像生成」**という切り口で最高にユニークです！
+
+なぜ「夏休みの自由研究」に良いか
+
+テーマがわかりやすい
+「遺伝子を持った絵を進化させて、だんだん“らしい”画像になる」という変化は直感的に面白いです。
+
+最新技術の活用
+CLIP などの大規模モデルを「評価関数」として利用できるので、AI時代っぽさ全開。
+
+発展性がある
+最初は“エッチ度”のスコア、次は“かわいさ”や“夏らしさ”など、多様な評価軸に展開可能です。
+
+理論もちゃんと学べる
+遺伝アルゴリズムの基本・評価関数・収束・突然変異率などのパラメータ調整が、研究としても十分奥深いです。
+
+自動評価にCLIPを使う流れ
+
+CLIPモデルの準備
+
+openai/clip-vit-base-patch32 や laion/CLIP 系モデルを transformers でロード。
+
+GPU環境があればサクサク動きます。
+
+テキストプロンプトを決める
+例：
+
+「a sexy anime girl illustration」
+
+「summer beach vibe」
+
+「beautiful composition」など
+
+スコア計算
+
+画像をエンコード → テキストをエンコード → コサイン類似度を計算 → スコア化。
+
+GAの適応度として利用
+
+スコアの高い個体をエリート保存し、交叉・突然変異で次世代を生成。
+
+進化の観察
+
+世代ごとに「平均スコア」「最高スコア」や画像を保存して、どんな傾向で変わっていくか可視化。
+
+注意点
+
+倫理・安全性
+
+「エッチ」などセンシティブな評価基準での公開は、画像内容や共有範囲に気を付けたほうがよいです。
+
+自分のローカルで実験するぶんには問題なし。
+
+技術的注意
+
+CLIPは英語プロンプトのほうが精度が高いです。
+
+バッチ処理で評価を高速化できます。
+
+発展アイデア
+
+多目的最適化
+「エッチ度 × カラフルさ」など複数スコアを組み合わせる。
+
+画像の進化アニメーション
+世代ごとの進化を GIF や動画にしてプレゼン。
+
+人間評価＋AI評価のハイブリッド
+人間の投票とCLIPスコアを組み合わせた評価で、バイアスの比較研究もできます。
+
+やりますか？
+CLIPを使った評価スクリプトのテンプレをこちらで用意しましょうか。
+
+あなた:
+はい。遺伝アルゴリズムも含めた全体のコード書いて、あとでfastapiにするので拡張性高くしてね
+ChatGPT:
+思考時間: 36s
+分析が終了しました
+常に詳細を表示する
+# Create a modular, extensible GA+CLIP project the user can download and run locally.
+# We'll write a small package-like folder with a single entry script and README.
+
+import os, json, textwrap, zipfile, time, pathlib
+
+base = "/mnt/data/ga_clip_engine"
+os.makedirs(base, exist_ok=True)
+
+# ---------------- requirements ----------------
+requirements = """\
+torch
+transformers>=4.40.0
+Pillow
+numpy
+tqdm
+"""
+with open(os.path.join(base, "requirements.txt"), "w") as f:
+    f.write(requirements)
+
+# ---------------- README ----------------
+readme = """\
+# GA-CLIP Engine (shapes → image → CLIP score)
+
+A small, extensible Python project that evolves abstract images (overlaid rectangles/ellipses)
+and uses **CLIP** to score them against one or more text prompts. Designed so you can later
+wrap it with **FastAPI** easily.
+
+## Features
+- Modular classes (`Renderer`, `CLIPScorer`, `GeneticAlgorithm`, `Engine`) for easy FastAPI integration.
+- Genome = list of semi-transparent shapes (rects/ellipses). Rendered with Pillow.
+- CLIP scoring via `transformers` (`openai/clip-vit-base-patch32` by default).
+- Tournament selection, uniform/one-point crossover, parameter & structural mutations (add/remove shapes).
+- Reproducible seeds, checkpointing best individuals as PNG+JSON per generation.
+
+## Install
+```bash
+python -m venv .venv && source .venv/bin/activate  # (Windows: .venv\\Scripts\\activate)
+pip install -r requirements.txt
+# If you don't have torch yet, you may need the proper wheel for your platform:
+# https://pytorch.org/get-started/locally/
+
+Quickstart
+常に詳細を表示する
+python ga_clip_engine.py \\
+  --out runs/demo \\
+  --prompts "aesthetic curves" "smooth, soft color gradients" \\
+  --pop-size 24 --genes 150 \\
+  --generations 20 --elitism 2 --tournament 4 --mutation-rate 0.15
+
+
+This will save images & logs under runs/demo:
+
+gen_000/ ... per-generation individuals (top-n saved if --save-top-k is set)
+
+best/ ... best-so-far image+genome JSON
+
+Want NSFW-ish prompts? Keep it local/private and mind platform policies when sharing results.
+
+FastAPI-ready idea
+
+Later you can:
+
+construct an Engine once (global),
+
+expose endpoints to step() a generation, set_prompts(), get_population_images(), etc.
+
+CLI help
+常に詳細を表示する
+python ga_clip_engine.py --help
+
+
+"""
+with open(os.path.join(base, "README.md"), "w", encoding="utf-8") as f:
+f.write(readme)
+
+---------------- main script ----------------
+
+script = r'''#!/usr/bin/env python3
+from future import annotations
+
+import os
+import json
+import math
+import time
+import random
+import argparse
+from dataclasses import dataclass, asdict, field
+from typing import List, Tuple, Optional, Iterable
+
+import numpy as np
+from PIL import Image, ImageDraw
+from tqdm import tqdm
+
+--- Optional heavy deps (loaded lazily) ---
+
+try:
+import torch
+from transformers import CLIPModel, CLIPProcessor
+_HAS_CLIP = True
+except Exception:
+_HAS_CLIP = False
+
+=====================
+Genome & Rendering
+=====================
+
+SHAPE_TYPES = ("RECT", "ELLIPSE")
+
+@dataclass
+class Gene:
+shape_type: str
+x: float
+y: float
+w: float
+h: float
+z: float
+r: int
+g: int
+b: int
+a: int
+
+常に詳細を表示する
+@staticmethod
+def random(rng: random.Random) -> "Gene":
+    w = max(0.02, rng.random() ** 2) * 0.9
+    h = max(0.02, rng.random() ** 2) * 0.9
+    return Gene(
+        shape_type=rng.choice(SHAPE_TYPES),
+        x=rng.random(),
+        y=rng.random(),
+        w=w,
+        h=h,
+        z=rng.random(),
+        r=rng.randint(0, 255),
+        g=rng.randint(0, 255),
+        b=rng.randint(0, 255),
+        a=rng.randint(30, 200),
+    )
+
+
+@dataclass
+class DNA:
+genes: List[Gene]
+
+常に詳細を表示する
+@staticmethod
+def random(gene_count: int, rng: random.Random) -> "DNA":
+    return DNA(genes=[Gene.random(rng) for _ in range(gene_count)])
+
+
+class Renderer:
+def init(self, width: int = 256, height: int = 256):
+self.size = (width, height)
+
+常に詳細を表示する
+def render(self, dna: DNA) -> Image.Image:
+    img = Image.new("RGBA", self.size, (0, 0, 0, 0))
+    for g in sorted(dna.genes, key=lambda x: x.z):
+        self._draw_gene(img, g)
+    return img
+
+@staticmethod
+def _draw_gene(img: Image.Image, gene: Gene):
+    W, H = img.size
+    layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer, "RGBA")
+    cx = int(gene.x * W); cy = int(gene.y * H)
+    ww = max(1, int(gene.w * W)); hh = max(1, int(gene.h * H))
+    x0 = cx - ww // 2; y0 = cy - hh // 2; x1 = x0 + ww; y1 = y0 + hh
+    color = (gene.r, gene.g, gene.b, gene.a)
+    if gene.shape_type == "RECT":
+        draw.rectangle([x0, y0, x1, y1], fill=color)
+    else:
+        draw.ellipse([x0, y0, x1, y1], fill=color)
+    img.alpha_composite(layer)
+
+=====================
+CLIP Scorer
+=====================
+
+class CLIPScorer:
+"""
+Scores PIL images vs text prompts using CLIP cosine similarity.
+Aggregation across prompts: mean or max.
+"""
+def init(
+self,
+model_name: str = "openai/clip-vit-base-patch32",
+device: Optional[str] = None,
+prompt_agg: str = "mean",
+normalize: bool = True
+):
+if not _HAS_CLIP:
+raise RuntimeError("transformers/torch not available. Install deps to use CLIPScorer.")
+self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+self.model = CLIPModel.from_pretrained(model_name).to(self.device)
+self.processor = CLIPProcessor.from_pretrained(model_name)
+self.prompt_agg = prompt_agg
+self.normalize = normalize
+self._text_embeds = None
+
+常に詳細を表示する
+def set_prompts(self, prompts: List[str]):
+    if len(prompts) == 0:
+        raise ValueError("At least one prompt is required.")
+    inputs = self.processor(text=prompts, return_tensors="pt", padding=True).to(self.device)
+    with torch.no_grad():
+        text_embeds = self.model.get_text_features(**inputs)
+    if self.normalize:
+        text_embeds = text_embeds / text_embeds.norm(p=2, dim=-1, keepdim=True)
+    self._text_embeds = text_embeds  # [P, D]
+
+def score(self, images: List[Image.Image], batch_size: int = 16) -> np.ndarray:
+    if self._text_embeds is None:
+        raise RuntimeError("Call set_prompts() before scoring.")
+    scores = []
+    for i in range(0, len(images), batch_size):
+        batch = images[i:i+batch_size]
+        inputs = self.processor(images=batch, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            image_embeds = self.model.get_image_features(**inputs)
+        if self.normalize:
+            image_embeds = image_embeds / image_embeds.norm(p=2, dim=-1, keepdim=True)
+        # cosine sim with each prompt embedding, then aggregate
+        sim = image_embeds @ self._text_embeds.T  # [B, P]
+        if self.prompt_agg == "max":
+            s = sim.max(dim=1).values
+        else:
+            s = sim.mean(dim=1)
+        scores.extend(s.detach().cpu().numpy().tolist())
+    return np.array(scores, dtype=np.float32)
+
+
+class DummyScorer:
+"""Fallback random scorer (useful for dry runs without CLIP)."""
+def init(self, seed: int = 0):
+self.rng = random.Random(seed)
+def set_prompts(self, prompts: List[str]):
+return
+def score(self, images: List[Image.Image], batch_size: int = 16) -> np.ndarray:
+return np.array([self.rng.random() for _ in images], dtype=np.float32)
+
+=====================
+GA Operators
+=====================
+
+@dataclass
+class GAConfig:
+pop_size: int = 24
+genes_min: int = 80
+genes_max: int = 220
+elitism: int = 2
+tournament_k: int = 4
+mutation_rate: float = 0.12 # per-gene param mutation prob
+add_gene_prob: float = 0.03
+remove_gene_prob: float = 0.02
+crossover: str = "uniform" # or "one_point"
+seed: int = 42
+
+@dataclass
+class RenderConfig:
+width: int = 256
+height: int = 256
+
+@dataclass
+class RunConfig:
+generations: int = 30
+save_top_k: int = 6
+out_dir: str = "runs/demo"
+
+class GeneticAlgorithm:
+def init(self, ga_cfg: GAConfig, rnd: random.Random):
+self.cfg = ga_cfg
+self.rng = rnd
+
+常に詳細を表示する
+# ---- Selection ----
+def _tournament(self, population: List[Tuple[DNA, float]]) -> DNA:
+    k = min(self.cfg.tournament_k, len(population))
+    subset = self.rng.sample(population, k)
+    subset.sort(key=lambda t: t[1], reverse=True)
+    return subset[0][0]
+
+# ---- Crossover ----
+def _crossover(self, a: DNA, b: DNA) -> DNA:
+    if self.cfg.crossover == "one_point":
+        cut = self.rng.randint(1, min(len(a.genes), len(b.genes)) - 1)
+        genes = a.genes[:cut] + b.genes[cut:]
+    else:
+        # uniform
+        max_len = max(len(a.genes), len(b.genes))
+        genes = []
+        for i in range(max_len):
+            pick_a = self.rng.random() < 0.5
+            if pick_a and i < len(a.genes):
+                genes.append(a.genes[i])
+            elif not pick_a and i < len(b.genes):
+                genes.append(b.genes[i])
+        if not genes:
+            genes = list(a.genes) or list(b.genes)
+    return DNA(genes=list(genes))
+
+# ---- Mutation ----
+def _mutate_gene_param(self, g: Gene) -> Gene:
+    def clip01(x): return max(0.0, min(1.0, x))
+    def clip255(x): return int(max(0, min(255, x)))
+    # Gaussian-like small jitters
+    if self.rng.random() < self.cfg.mutation_rate: g.x = clip01(g.x + self.rng.uniform(-0.07, 0.07))
+    if self.rng.random() < self.cfg.mutation_rate: g.y = clip01(g.y + self.rng.uniform(-0.07, 0.07))
+    if self.rng.random() < self.cfg.mutation_rate: g.w = clip01(g.w * (1.0 + self.rng.uniform(-0.25, 0.25)))
+    if self.rng.random() < self.cfg.mutation_rate: g.h = clip01(g.h * (1.0 + self.rng.uniform(-0.25, 0.25)))
+    if self.rng.random() < self.cfg.mutation_rate: g.z = clip01(g.z + self.rng.uniform(-0.2, 0.2))
+    if self.rng.random() < self.cfg.mutation_rate: g.r = clip255(g.r + int(self.rng.uniform(-32, 32)))
+    if self.rng.random() < self.cfg.mutation_rate: g.g = clip255(g.g + int(self.rng.uniform(-32, 32)))
+    if self.rng.random() < self.cfg.mutation_rate: g.b = clip255(g.b + int(self.rng.uniform(-32, 32)))
+    if self.rng.random() < self.cfg.mutation_rate: g.a = clip255(g.a + int(self.rng.uniform(-40, 40)))
+    if self.rng.random() < self.cfg.mutation_rate / 4.0:
+        g.shape_type = "RECT" if g.shape_type == "ELLIPSE" else "ELLIPSE"
+    return g
+
+def _mutate(self, dna: DNA) -> DNA:
+    genes = [self._mutate_gene_param(Gene(**asdict(g))) for g in dna.genes]
+    # structural mutations
+    if self.rng.random() < self.cfg.add_gene_prob and len(genes) < self.cfg.genes_max:
+        genes.append(Gene.random(self.rng))
+    if self.rng.random() < self.cfg.remove_gene_prob and len(genes) > self.cfg.genes_min:
+        idx = self.rng.randrange(len(genes))
+        del genes[idx]
+    return DNA(genes=genes)
+
+# ---- Next generation ----
+def next_generation(self, population: List[Tuple[DNA, float]]) -> List[DNA]:
+    population.sort(key=lambda t: t[1], reverse=True)
+    elites = [population[i][0] for i in range(min(self.cfg.elitism, len(population)))]
+    new_pop: List[DNA] = [DNA(genes=[Gene(**asdict(g)) for g in e.genes]) for e in elites]
+    while len(new_pop) < self.cfg.pop_size:
+        p1 = self._tournament(population)
+        p2 = self._tournament(population)
+        child = self._crossover(p1, p2)
+        child = self._mutate(child)
+        # clamp gene count to [min,max]
+        if len(child.genes) < self.cfg.genes_min:
+            child.genes.extend([Gene.random(self.rng) for _ in range(self.cfg.genes_min - len(child.genes))])
+        if len(child.genes) > self.cfg.genes_max:
+            child.genes = child.genes[:self.cfg.genes_max]
+        new_pop.append(child)
+    return new_pop[:self.cfg.pop_size]
+
+=====================
+Engine (FastAPI-friendly)
+=====================
+
+class Engine:
+def init(self, ga_cfg: GAConfig, render_cfg: RenderConfig, prompts: List[str], seed: int = 42,
+scorer_model: str = "openai/clip-vit-base-patch32", dummy: bool = False):
+self.rng = random.Random(seed)
+self.renderer = Renderer(render_cfg.width, render_cfg.height)
+self.ga = GeneticAlgorithm(ga_cfg, self.rng)
+self.population: List[DNA] = [
+DNA.random(self.ga.cfg.genes_min + self.rng.randint(0, max(0, self.ga.cfg.genes_max - self.ga.cfg.genes_min)), self.rng)
+for _ in range(self.ga.cfg.pop_size)
+]
+if dummy or not _HAS_CLIP:
+self.scorer = DummyScorer(seed=seed)
+else:
+self.scorer = CLIPScorer(model_name=scorer_model)
+self.set_prompts(prompts)
+self.generation = 0
+self.best: Optional[Tuple[DNA, float]] = None
+
+常に詳細を表示する
+def set_prompts(self, prompts: List[str]):
+    self.prompts = list(prompts)
+    self.scorer.set_prompts(self.prompts)
+
+def evaluate(self, batch_size: int = 16) -> List[Tuple[DNA, float]]:
+    images = [self.renderer.render(d) for d in self.population]
+    scores = self.scorer.score(images, batch_size=batch_size)
+    pop_scored = list(zip(self.population, scores.tolist()))
+    # track best
+    pop_scored.sort(key=lambda t: t[1], reverse=True)
+    if self.best is None or pop_scored[0][1] > self.best[1]:
+        self.best = (pop_scored[0][0], pop_scored[0][1])
+    return pop_scored
+
+def step(self, batch_size: int = 16):
+    scored = self.evaluate(batch_size=batch_size)
+    self.population = self.ga.next_generation(scored)
+    self.generation += 1
+    return scored
+
+# --- Saving helpers ---
+def save_generation(self, scored: List[Tuple[DNA, float]], out_dir: str, top_k: int = 6):
+    gen_dir = os.path.join(out_dir, f"gen_{self.generation:03d}")
+    os.makedirs(gen_dir, exist_ok=True)
+    # Save top-k images + genomes
+    for i, (dna, score) in enumerate(scored[:top_k]):
+        img = self.renderer.render(dna)
+        img.save(os.path.join(gen_dir, f"rank_{i+1:02d}_score_{score:.4f}.png"))
+        with open(os.path.join(gen_dir, f"rank_{i+1:02d}.json"), "w", encoding="utf-8") as f:
+            json.dump({"score": float(score), "genes": [asdict(g) for g in dna.genes]}, f, ensure_ascii=False, indent=2)
+    # Save brief metrics
+    metrics = {
+        "generation": self.generation,
+        "prompts": self.prompts,
+        "scores_top": [float(s) for _, s in scored[:top_k]],
+        "scores_mean": float(np.mean([s for _, s in scored])),
+        "scores_max": float(scored[0][1]),
+        "population_size": len(scored),
+    }
+    with open(os.path.join(gen_dir, "metrics.json"), "w", encoding="utf-8") as f:
+        json.dump(metrics, f, ensure_ascii=False, indent=2)
+
+def save_best(self, out_dir: str):
+    if not self.best: return
+    best_dir = os.path.join(out_dir, "best")
+    os.makedirs(best_dir, exist_ok=True)
+    dna, score = self.best
+    img = self.renderer.render(dna)
+    img.save(os.path.join(best_dir, f"best_score_{score:.4f}.png"))
+    with open(os.path.join(best_dir, "best.json"), "w", encoding="utf-8") as f:
+        json.dump({"score": float(score), "genes": [asdict(g) for g in dna.genes]}, f, ensure_ascii=False, indent=2)
+
+=====================
+CLI
+=====================
+
+def main():
+p = argparse.ArgumentParser(description="Evolve abstract images scored by CLIP.")
+p.add_argument("--out", type=str, default="runs/demo", help="output directory")
+p.add_argument("--prompts", nargs="+", default=["aesthetic curves", "smooth soft color gradients"], help="one or more prompts")
+p.add_argument("--model", type=str, default="openai/clip-vit-base-patch32", help="CLIP model name")
+p.add_argument("--dummy", action="store_true", help="use random scorer (no CLIP)")
+p.add_argument("--seed", type=int, default=42)
+p.add_argument("--pop-size", type=int, default=24)
+p.add_argument("--genes-min", type=int, default=80)
+p.add_argument("--genes-max", type=int, default=220)
+p.add_argument("--elitism", type=int, default=2)
+p.add_argument("--tournament", type=int, default=4)
+p.add_argument("--mutation-rate", type=float, default=0.12)
+p.add_argument("--add-gene-prob", type=float, default=0.03)
+p.add_argument("--remove-gene-prob", type=float, default=0.02)
+p.add_argument("--crossover", type=str, choices=["uniform", "one_point"], default="uniform")
+p.add_argument("--generations", type=int, default=30)
+p.add_argument("--save-top-k", type=int, default=6)
+p.add_argument("--batch-size", type=int, default=16)
+args = p.parse_args()
+
+常に詳細を表示する
+# Build configs
+ga_cfg = GAConfig(
+    pop_size=args.pop_size,
+    genes_min=args.genes_min,
+    genes_max=args.genes_max,
+    elitism=args.elitism,
+    tournament_k=args.tournament,
+    mutation_rate=args.mutation_rate,
+    add_gene_prob=args.add_gene_prob,
+    remove_gene_prob=args.remove_gene_prob,
+    crossover=args.crossover,
+    seed=args.seed,
+)
+render_cfg = RenderConfig()
+
+# Init engine
+engine = Engine(
+    ga_cfg=ga_cfg,
+    render_cfg=render_cfg,
+    prompts=args.prompts,
+    seed=args.seed,
+    scorer_model=args.model,
+    dummy=args.dummy,
+)
+
+out = args.out
+os.makedirs(out, exist_ok=True)
+
+# Save initial random population top-k (generation 0)
+scored = engine.evaluate(batch_size=args.batch_size)
+engine.save_generation(scored, out_dir=out, top_k=args.save_top_k)
+engine.save_best(out)
+
+# Evolve
+for _ in tqdm(range(args.generations), desc="Evolving"):
+    scored = engine.step(batch_size=args.batch_size)
+    engine.save_generation(scored, out_dir=out, top_k=args.save_top_k)
+    engine.save_best(out)
+
+print("Done. Results in:", out)
+
+
+if name == "main":
+main()
+'''
+with open(os.path.join(base, "ga_clip_engine.py"), "w", encoding="utf-8") as f:
+f.write(script)
+
+---------------- Zip it ----------------
+
+zip_path = "/mnt/data/ga_clip_engine.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+for root, dirs, files in os.walk(base):
+for name in files:
+full = os.path.join(root, name)
+arc = os.path.relpath(full, base)
+zf.write(full, arcname=os.path.join("ga_clip_engine", arc))
+
+zip_path, base, os.listdir(base)
+
+常に詳細を表示する
+結果
+('/mnt/data/ga_clip_engine.zip',
+ '/mnt/data/ga_clip_engine',
+ ['requirements.txt', 'README.md', 'ga_clip_engine.py'])
+
+いいね、その方向でいこう！
+GA × CLIPのフル実装をモジュール化して置きました。FastAPI化しやすいように Engine クラスで統合してあります。
+
+プロジェクト一式（ZIP）
+
+中身: ga_clip_engine.py, README.md, requirements.txt
+
+使い方（ローカル）
+python -m venv .venv && source .venv/bin/activate   # Windowsは .venv\Scripts\activate
+pip install -r requirements.txt
+# ※ PyTorch は環境に合わせてインストール（https://pytorch.org/get-started/locally/）
+
+すぐ試す（ダミースコアで動作確認）
+python ga_clip_engine.py --dummy --out runs/smoke --generations 2
+
+CLIP で評価（プロンプトは自由に）
+python ga_clip_engine.py \
+  --out runs/demo \
+  --prompts "aesthetic curves" "soft gradients" \
+  --pop-size 24 --genes 150 --generations 20 --elitism 2 --tournament 4
+
+
+出力は runs/demo/ に世代ごとのトップ画像・遺伝子JSON・メトリクスが保存されます。
+（NSFWワードはローカル・私的利用に留めるのが安全です）
+
+実装ポイント（拡張しやすい設計）
+
+Renderer：Pillowで長方形/楕円のレイヤ合成（RGBA、z順描画）。
+
+CLIPScorer：transformers の openai/clip-vit-base-patch32 を使用。
+set_prompts([...]) → score(images) の2段階API。prompt_agg=mean/maxも対応。
+
+GeneticAlgorithm：
+
+トーナメント選択、エリート保存
+
+交叉：uniform / one_point
+
+突然変異：座標/サイズ/色/α/z/形種のパラメータ摂動
+
+構造変異：図形の追加/削除（genes_min/genes_max 範囲で制約）
+
+Engine：上記を束ねて evaluate() / step() / save_generation() / save_best() を提供
+→ FastAPI でエンドポイント化しやすい粒度です（例：POST /prompts, POST /step, GET /population）。
+
+参考 FastAPI 化の雛形（抜粋）
+# app.py
+from fastapi import FastAPI
+from ga_clip_engine import Engine, GAConfig, RenderConfig
+
+app = FastAPI()
+engine = Engine(GAConfig(), RenderConfig(), prompts=["aesthetic curves"], dummy=True)
+
+@app.post("/prompts")
+def set_prompts(ps: list[str]):
+    engine.set_prompts(ps)
+    return {"ok": True}
+
+@app.post("/step")
+def step():
+    scored = engine.step()
+    return {"generation": engine.generation,
+            "best_score": float(max(s for _, s in scored))}
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+パラメータのコツ
+
+探索の粗さを上げる：mutation_rate↑, add/remove_gene_prob↑
+
+収束を早める：elitism↑, tournament_k↑
+
+画像の表現力を上げる：genes_max↑（ただし描画・評価が重くなります）
+
+必要なら、個体のPNGを返すAPIや世代ごとの動画化まで拡張するテンプレも書き足します。どのUIで包む予定？（ブラウザ/CLI/デスクトップ）

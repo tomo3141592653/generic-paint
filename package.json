@@ -1,0 +1,15 @@
+{
+  "name": "generic-paint",
+  "version": "1.0.0",
+  "description": "talklog.txtの会話をベースに作成した、遺伝アルゴリズムで抽象画像を進化させ、CLIPで自動評価するシステムです。 FastAPIへの拡張を想定したモジュール構成になっています。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@marp-team/marp-cli": "^4.2.3"
+  }
+}

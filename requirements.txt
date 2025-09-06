@@ -6,3 +6,4 @@ tqdm
 fastapi
 uvicorn[standard]
 PyYAML>=6.0
+deap>=1.3.0

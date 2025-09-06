@@ -1,0 +1,34 @@
+# 高速テスト用設定
+# 処理速度を最優先にした設定
+
+ga:
+  pop_size: 20                    # 個体数半減
+  genes_min: 500                  # 遺伝子数大幅削減
+  genes_max: 500
+  elitism: 3                      # エリート数調整
+  tournament_k: 3
+  mutation_rate: 0.12
+  add_gene_prob: 0.005            # さらに低く
+  remove_gene_prob: 0.005
+  crossover: "elite_strategy"
+  seed: 42
+
+render:
+  width: 128                      # 画像サイズ縮小で高速化
+  height: 128
+
+run:
+  generations: 100                # 短期実験用
+  save_top_k: 3
+  out_dir: "runs/fast_test"
+  batch_size: 8                   # バッチサイズ削減
+  render_workers: 4               # ワーカー数削減
+  save_freq: 50
+  show: false
+  show_top_k: 3
+
+model:
+  prompts: ["1dog"]
+  model: "openai/clip-vit-base-patch32"
+  dummy: false                    # ダミーモードでさらに高速化可能
+  device: null
