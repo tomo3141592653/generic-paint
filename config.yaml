@@ -4,15 +4,15 @@
 # 遺伝的アルゴリズムのパラメータ
 ga:
   pop_size: 40                    # 個体数 (他の記事では40個体)
-  genes_min: 3000                 # 最小遺伝子数 (他の記事では3000個の図形)
-  genes_max: 3000                 # 最大遺伝子数 (固定)
-  elitism: 5                      # エリート個体数 (上位5個体が生存)
+  genes_min: 800                 # 最小遺伝子数 (他の記事では3000個の図形)
+  genes_max: 1200                 # 最大遺伝子数 (固定)
+  elitism: 10                      # エリート個体数 (上位5個体が生存)
   tournament_k: 4                 # トーナメント選択のk値
   mutation_rate: 0.12             # 突然変異確率 (各遺伝子パラメータ)
-  add_gene_prob: 0.01             # 遺伝子追加確率 (低く設定)
-  remove_gene_prob: 0.01          # 遺伝子削除確率 (低く設定)
-  crossover: "elite_strategy"     # 交配戦略 (エリート優遇)
-  seed: 42                        # 乱数シード
+  add_gene_prob: 0.1             # 遺伝子追加確率 
+  remove_gene_prob: 0.1          # 遺伝子削除確率 
+  crossover: "elite_strategy"     # 交配戦略 elite_strategy or uniform
+  seed: null                      # 乱数シード (nullの場合はunix timeから自動生成)
 
 # 描画設定
 render:
@@ -21,20 +21,19 @@ render:
 
 # 実行設定
 run:
-  generations: 2000               # 世代数 (他の記事では2000世代)
+  generations: 20000               # 世代数 (他の記事では2000世代)
   save_top_k: 6                   # 保存する上位個体数
-  out_dir: "runs/demo"            # 出力ディレクトリ
+  out_dir: "runs/souryuu_asuka_langley"            # 出力ディレクトリ
   batch_size: 16                  # バッチサイズ
   render_workers: 8               # レンダリング並列ワーカー数
   save_freq: 100                  # 保存頻度 (N世代毎)
-  show: false                     # リアルタイム表示
+  show: false                    # リアルタイム表示
   show_top_k: 6                   # 表示する上位個体数
 
 # モデル設定
 model:
   prompts:                        # CLIPプロンプト
-    - "aesthetic curves"
-    - "smooth soft color gradients"
+    - "souryuu asuka langley"
   model: "openai/clip-vit-base-patch32"  # CLIPモデル
   dummy: false                    # ダミースコアラー使用
   device: null                    # デバイス (null=自動選択)

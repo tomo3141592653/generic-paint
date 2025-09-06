@@ -7,6 +7,7 @@ import math
 import time
 import random
 import argparse
+import shutil
 from dataclasses import dataclass, asdict, field
 from typing import List, Tuple, Optional, Iterable
 from concurrent.futures import ThreadPoolExecutor
@@ -367,7 +368,7 @@ class GAConfig:
     add_gene_prob: float = 0.01  # 遺伝子数固定のため低く設定
     remove_gene_prob: float = 0.01  # 遺伝子数固定のため低く設定
     crossover: str = "elite_strategy"  # エリート優遇戦略
-    seed: int = 42
+    seed: Optional[int] = None  # Noneの場合はunix timeから自動生成
 
     @classmethod
     def from_dict(cls, data: dict) -> "GAConfig":
@@ -650,11 +651,16 @@ class Engine:
         ga_cfg: GAConfig,
         render_cfg: RenderConfig,
         prompts: List[str],
-        seed: int = 42,
+        seed: Optional[int] = None,
         scorer_model: str = "openai/clip-vit-base-patch32",
         dummy: bool = False,
         verbose: bool = False,
     ):
+        # seedが指定されていない場合はunix timeから生成
+        if seed is None:
+            seed = int(time.time())
+            print(f"Auto-generated seed from unix time: {seed}")
+        self.actual_seed = seed
         self.rng = random.Random(seed)
         self.verbose = verbose
         self.renderer = Renderer(render_cfg.width, render_cfg.height, verbose=verbose)
@@ -682,6 +688,7 @@ class Engine:
         self.set_prompts(prompts)
         self.generation = 0
         self.best: Optional[Tuple[DNA, float]] = None
+        self.last_saved_score: Optional[float] = None
 
     def set_prompts(self, prompts: List[str]):
         self.prompts = list(prompts)
@@ -802,18 +809,38 @@ class Engine:
     def save_best(self, out_dir: str):
         if not self.best:
             return
+
+        dna, score = self.best
+        score_str = f"{score:.4f}"
+
+        # スコアが前回と同じ場合はスキップ
+        if (
+            self.last_saved_score is not None
+            and f"{self.last_saved_score:.4f}" == score_str
+        ):
+            return
+
         best_dir = os.path.join(out_dir, "best")
         os.makedirs(best_dir, exist_ok=True)
-        dna, score = self.best
+
         img = self.renderer.render(dna)
-        img.save(os.path.join(best_dir, f"best_score_{score:.4f}.png"))
+        img.save(
+            os.path.join(best_dir, f"best_score_{score_str}_{self.generation}.png")
+        )
         with open(os.path.join(best_dir, "best.json"), "w", encoding="utf-8") as f:
             json.dump(
-                {"score": float(score), "genes": [asdict(g) for g in dna.genes]},
+                {
+                    "score": float(score),
+                    "genes": [asdict(g) for g in dna.genes],
+                    "generation": self.generation,
+                },
                 f,
                 ensure_ascii=False,
                 indent=2,
             )
+
+        # 保存したスコアを記録
+        self.last_saved_score = score
 
 
 # =====================
@@ -885,6 +912,79 @@ class EvolutionDisplay:
 
 
 # =====================
+# Helper Functions
+# =====================
+
+
+def handle_existing_output_dir(
+    out_dir: str, overwrite: bool = False, auto_suffix: bool = False
+) -> str:
+    """既存の出力ディレクトリの処理"""
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+        return out_dir
+
+    # 非対話的オプションの処理
+    if overwrite:
+        shutil.rmtree(out_dir)
+        os.makedirs(out_dir)
+        print(f"既存ディレクトリを削除しました: {out_dir}")
+        return out_dir
+
+    if auto_suffix:
+        base_dir = out_dir.rstrip("/")
+        counter = 1
+        while True:
+            new_dir = f"{base_dir}_{counter}"
+            if not os.path.exists(new_dir):
+                os.makedirs(new_dir)
+                print(f"新しいディレクトリを作成しました: {new_dir}")
+                return new_dir
+            counter += 1
+
+    # 対話的選択
+    print(f"\n出力ディレクトリが既に存在します: {out_dir}")
+    print("選択してください:")
+    print("1. 既存ディレクトリを削除して実行")
+    print("2. 新しい名前で実行 (suffix _1, _2, ...)")
+    print("3. 実行を中止")
+
+    while True:
+        try:
+            choice = input("選択 (1/2/3): ").strip()
+
+            if choice == "1":
+                # 既存ディレクトリを削除
+                shutil.rmtree(out_dir)
+                os.makedirs(out_dir)
+                print(f"既存ディレクトリを削除しました: {out_dir}")
+                return out_dir
+
+            elif choice == "2":
+                # 新しい名前を生成
+                base_dir = out_dir.rstrip("/")
+                counter = 1
+                while True:
+                    new_dir = f"{base_dir}_{counter}"
+                    if not os.path.exists(new_dir):
+                        os.makedirs(new_dir)
+                        print(f"新しいディレクトリを作成しました: {new_dir}")
+                        return new_dir
+                    counter += 1
+
+            elif choice == "3":
+                print("実行を中止しました。")
+                exit(0)
+
+            else:
+                print("1, 2, 3のいずれかを入力してください。")
+
+        except KeyboardInterrupt:
+            print("\n実行を中止しました。")
+            exit(0)
+
+
+# =====================
 # CLI
 # =====================
 
@@ -913,6 +1013,16 @@ def main():
     )
     p.add_argument(
         "--dummy", action="store_true", help="use random scorer (overrides config)"
+    )
+    p.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="automatically overwrite existing output directory",
+    )
+    p.add_argument(
+        "--auto-suffix",
+        action="store_true",
+        help="automatically add suffix if output directory exists",
     )
     args = p.parse_args()
 
@@ -945,6 +1055,7 @@ def main():
     if args.dummy:
         config.model.dummy = True
 
+    print(f"config: {config}")
     # Use configs from loaded/default config
     ga_cfg = config.ga
     render_cfg = config.render
@@ -954,13 +1065,32 @@ def main():
         ga_cfg=ga_cfg,
         render_cfg=render_cfg,
         prompts=config.model.prompts,
-        seed=ga_cfg.seed,
+        seed=ga_cfg.seed,  # Noneの場合はEngine内でunix timeから自動生成
         scorer_model=config.model.model,
         dummy=config.model.dummy,
     )
 
     out = config.run.out_dir
-    os.makedirs(out, exist_ok=True)
+    out = handle_existing_output_dir(
+        out, overwrite=args.overwrite, auto_suffix=args.auto_suffix
+    )
+
+    # Copy config file to output directory for reproducibility
+    if args.config:
+        config_dest = os.path.join(out, "config.yaml")
+        shutil.copy2(args.config, config_dest)
+        print(f"Config copied to: {config_dest}")
+    else:
+        # Save current config if no config file was used
+        config_dest = os.path.join(out, "config.yaml")
+        config.to_file(config_dest)
+        print(f"Config saved to: {config_dest}")
+
+    # Save actual used seed for reproducibility
+    config.ga.seed = engine.actual_seed
+    config_with_seed_dest = os.path.join(out, "config_with_actual_seed.yaml")
+    config.to_file(config_with_seed_dest)
+    print(f"Config with actual seed saved to: {config_with_seed_dest}")
 
     # Setup display if requested
     display = None
