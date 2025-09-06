@@ -1,0 +1,6 @@
+html:
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
+
+options:
+  html: true
+  allowLocalFiles: true

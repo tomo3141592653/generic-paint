@@ -26,11 +26,12 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
+;" data-marpit-pagination-total="26" data-size="16:9">
 <h1 id="%E9%81%BA%E4%BC%9D%E7%9A%84%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%A8clip%E3%81%AB%E3%82%88%E3%82%8B%E7%94%BB%E5%83%8F%E7%94%9F%E6%88%90%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0">遺伝的アルゴリズムとCLIPによる画像生成システム</h1>
 <h2 id="text-to-image%E3%81%AE%E6%96%B0%E3%81%97%E3%81%84%E3%82%A2%E3%83%97%E3%83%AD%E3%83%BC%E3%83%81">Text-to-Imageの新しいアプローチ</h2>
-<p><strong>発表者</strong>: 研究者<br />
-<strong>日付</strong>: 2025年</p>
+<p><strong>発表者</strong>: 平田朋義<br />
+<strong>日付</strong>: 2025/09/07<br />
+<strong>repository</strong>:<a href="https://github.com/tomo3141592653/generic-paint/">https://github.com/tomo3141592653/generic-paint/</a></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -50,20 +51,14 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
+;" data-marpit-pagination-total="26" data-size="16:9">
 <h2 id="%E7%A0%94%E7%A9%B6%E3%81%AE%E5%8B%95%E6%A9%9F">研究の動機</h2>
 <h3 id="%E6%97%A2%E5%AD%98%E3%81%AE%E7%94%BB%E5%83%8F%E7%94%9F%E6%88%90ai%E3%81%AE%E8%AA%B2%E9%A1%8C">既存の画像生成AIの課題</h3>
 <ul>
 <li><strong>Stable Diffusion</strong>などの画像生成AIは似たような絵を生成してしまう</li>
 <li><strong>プロンプトだけの変化では限界</strong>がある</li>
 <li>より多様で創造的な画像生成手法が必要</li>
-</ul>
-<h3 id="%E7%9D%80%E6%83%B3%E3%81%AE%E6%BA%90">着想の源</h3>
-<p>参考研究: <a href="https://gamingchahan.com/ecchi/">遺伝的アルゴリズムで最高にエッチな画像を作ろう！</a></p>
-<ul>
-<li>人間の評価による画像進化</li>
-<li>遺伝的アルゴリズムの応用</li>
-<li><strong>CLIPで自動評価すればText-to-Imageが作れる</strong>のでは？</li>
+<li>画像生成エンジン部分を自作すると自分固有の表現ができる</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-paginate="true" data-theme="default" data-style="section {
@@ -84,29 +79,15 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="clip%E3%81%A8%E3%81%AF">CLIPとは？</h2>
-<h3 id="%E7%94%BB%E5%83%8F%E3%81%A8%E6%96%87%E7%AB%A0%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8Bai">画像と文章を理解するAI</h3>
-<p><strong>CLIP</strong>は画像と文章を同じ「概念空間」で理解するAIです。</p>
-<div class="mermaid">
-graph LR
-    A["画像: 犬の写真"] --&gt; C["CLIP<br />画像エンコーダ"]
-    B["テキスト: 犬"] --&gt; D["CLIP<br />テキストエンコーダ"]
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>C --&gt; E[&quot;ベクトル&lt;br/&gt;[0.2, 0.8, 0.1, ...]&quot;]
-D --&gt; F[&quot;ベクトル&lt;br/&gt;[0.2, 0.8, 0.1, ...]&quot;]
-
-E --&gt; G[&quot;類似度: 0.95&lt;br/&gt;とても近い&quot;]
-F --&gt; G
-
-style A fill:#e3f2fd
-style B fill:#e8f5e8
-style E fill:#fff3e0
-style F fill:#fff3e0
-style G fill:#fce4ec
-</code></pre>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({startOnLoad:true});</script>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E7%9D%80%E6%83%B3%E3%81%AE%E6%BA%90">着想の源</h3>
+<p>参考研究: <a href="https://gamingchahan.com/ecchi/">遺伝的アルゴリズムで最高にエッチな画像を作ろう！</a></p>
+<ul>
+<li><a href="https://nlab.itmedia.co.jp/cont/articles/3316034/">解説記事</a></li>
+<li>人間の評価による画像進化</li>
+<li>遺伝的アルゴリズムの応用</li>
+<li>既存の研究では人間による評価をしたが、<strong>自動評価する仕組みを作ればText-to-Imageが作れる</strong>のでは？</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="4" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -126,21 +107,11 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="clip%E3%81%AE%E4%BB%95%E7%B5%84%E3%81%BF">CLIPの仕組み</h2>
-<h3 id="%E6%84%8F%E5%91%B3%E3%81%AE%E8%BF%91%E3%81%95%E3%82%92%E6%95%B0%E5%80%A4%E3%81%A7%E6%B8%AC%E3%82%8B">意味の近さを数値で測る</h3>
-<p><strong>つまり、画像と文章の「意味の近さ」を数値で測れる！</strong></p>
-<ul>
-<li>「犬の写真」と「犬」という文字 → 同じベクトル（数値）に変換</li>
-<li>「猫の絵」と「ネコ」という文字 → 似たベクトルに変換</li>
-<li>つまり、<strong>画像と文章の「意味の近さ」を数値で測れる</strong></li>
-</ul>
-<h3 id="%E4%BB%8A%E5%9B%9E%E3%81%AE%E6%B4%BB%E7%94%A8%E6%96%B9%E6%B3%95">今回の活用方法</h3>
-<ul>
-<li><strong>プロンプト</strong>をCLIPで数値化</li>
-<li><strong>生成画像</strong>もCLIPで数値化</li>
-<li><strong>両者の近さ</strong>で画像の良さを判定</li>
-</ul>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="clip%E3%81%A8%E3%81%AF">CLIPとは？</h2>
+<h3 id="%E7%94%BB%E5%83%8F%E3%81%A8%E6%96%87%E7%AB%A0%E3%82%92%E7%90%86%E8%A7%A3%E3%81%99%E3%82%8Bai">画像と文章を理解するAI</h3>
+<p><strong>CLIP</strong>は画像と文章を同じ「概念空間」で理解するAIです。</p>
+<p><img src="fig1.png" alt="概念図" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="5" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -160,15 +131,22 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E4%BB%8A%E5%9B%9E%E3%81%AE%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0">今回のアルゴリズム</h2>
-<h3 id="4%E3%81%A4%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%E3%81%A7%E7%94%BB%E5%83%8F%E3%82%92%E9%80%B2%E5%8C%96">4つのステップで画像を進化</h3>
-<ol>
-<li><strong>プロンプト</strong>（例：&quot;初音ミク&quot;）→ <strong>CLIPで概念ベクトル</strong>に変換</li>
-<li><strong>ランダムな図形の画像</strong>を生成 → <strong>CLIPで画像ベクトル</strong>に変換</li>
-<li><strong>遺伝的アルゴリズム</strong>で画像を進化させて、<strong>概念ベクトルに近づける</strong></li>
-<li>世代を重ねるごとに「初音ミクらしい」画像に収束</li>
-</ol>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="clip%E3%81%AE%E4%BB%95%E7%B5%84%E3%81%BF">CLIPの仕組み</h2>
+<h3 id="%E6%84%8F%E5%91%B3%E3%81%AE%E8%BF%91%E3%81%95%E3%82%92%E6%95%B0%E5%80%A4%E3%81%A7%E6%B8%AC%E3%82%8B">意味の近さを数値で測る</h3>
+<p><strong>つまり、画像と文章の「意味の近さ」を数値で測れる！</strong></p>
+<ul>
+<li>「犬の写真」と「犬」という文字 → 同じベクトル（数値）に変換</li>
+<li>「猫の絵」と「ネコ」という文字 → 似たベクトルに変換</li>
+<li>つまり、<strong>画像と文章の「意味の近さ」を数値で測れる</strong></li>
+</ul>
+<h3 id="%E4%BB%8A%E5%9B%9E%E3%81%AE%E6%B4%BB%E7%94%A8%E6%96%B9%E6%B3%95">今回の活用方法</h3>
+<ul>
+<li><strong>プロンプト</strong>をCLIPで数値化</li>
+<li><strong>生成画像</strong>もCLIPで数値化</li>
+<li><strong>両者の近さ</strong>を判定</li>
+<li>画像を<strong>進化</strong>させてよりプロンプトに近い画像を生成する。</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -188,44 +166,15 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%AE%E6%B5%81%E3%82%8C%E5%9B%B3">アルゴリズムの流れ図</h2>
-<div class="mermaid">
-graph TD
-    A["プロンプト<br />初音ミク"] --&gt; B["CLIP<br />テキストエンコーダ"]
-    B --&gt; C["概念ベクトル<br />目標値"]
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code>D[&quot;ランダムな図形画像&quot;] --&gt; E[&quot;CLIP&lt;br/&gt;画像エンコーダ&quot;]
-E --&gt; F[&quot;画像ベクトル&lt;br/&gt;現在値&quot;]
-
-C --&gt; G[&quot;類似度計算&lt;br/&gt;コサイン類似度&quot;]
-F --&gt; G
-G --&gt; H[&quot;適応度スコア&quot;]
-
-H --&gt; I[&quot;遺伝的アルゴリズム&lt;br/&gt;選択・交配・突然変異&quot;]
-I --&gt; J[&quot;次世代画像&quot;]
-J --&gt; E
-
-style A fill:#e1f5fe
-style C fill:#c8e6c9
-style H fill:#ffecb3
-style J fill:#f3e5f5
-</code></pre>
-</div>
-<h3 id="%E5%AE%9F%E9%9A%9B%E3%81%AE%E4%BE%8B%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E3%81%AE%E9%80%B2%E5%8C%96">実際の例：初音ミクの進化</h3>
-<p><strong>世代0（ランダム）</strong> → <strong>世代1000</strong> → <strong>最終世代</strong></p>
-<p><img src="runs/hatsune_miku_3/gen_000/rank_01_score_0.2424.png" alt="Gen 0" /> → <img src="runs/hatsune_miku_3/gen_1000/rank_01_score_0.3425.png" alt="Gen 1000" /> → <img src="runs/hatsune_miku_3/best/best_score_0.3552_3686.png" alt="Final" /></p>
-<p>スコア: <strong>0.2424</strong> → <strong>0.3425</strong> → <strong>0.3552</strong></p>
-<h3 id="%E5%AE%9F%E9%9A%9B%E3%81%AE%E4%BE%8Bdoraemon%E3%81%AE%E9%80%B2%E5%8C%96">実際の例：Doraemonの進化</h3>
-<p><strong>世代0（ランダム）</strong> → <strong>世代100</strong> → <strong>最終世代</strong></p>
-<p><img src="runs/doraemon/gen_000/rank_01_score_0.2532.png" alt="Doraemon Gen 0" /> → <img src="runs/doraemon/gen_100/rank_01_score_0.3015.png" alt="Doraemon Gen 100" /> → <img src="runs/doraemon/best/best_score_0.3418_14626.png" alt="Doraemon Final" /></p>
-<p>スコア: <strong>0.2532</strong> → <strong>0.3015</strong> → <strong>0.3418</strong></p>
-<h3 id="%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E6%A7%8B%E6%88%90">システム構成</h3>
-<ul>
-<li><strong>個体</strong>: 複数の図形（矩形・楕円）の組み合わせ</li>
-<li><strong>遺伝子</strong>: 各図形の位置、サイズ、色、透明度</li>
-<li><strong>適応度</strong>: CLIPによるテキスト-画像類似度スコア</li>
-<li><strong>進化</strong>: 選択、交配、突然変異</li>
-</ul>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E4%BB%8A%E5%9B%9E%E3%81%AE%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0">今回のアルゴリズム</h2>
+<h3 id="4%E3%81%A4%E3%81%AE%E3%82%B9%E3%83%86%E3%83%83%E3%83%97%E3%81%A7%E7%94%BB%E5%83%8F%E3%82%92%E9%80%B2%E5%8C%96">4つのステップで画像を進化</h3>
+<ol>
+<li><strong>プロンプト</strong>（例：&quot;初音ミク&quot;）→ <strong>CLIPで概念ベクトル</strong>に変換</li>
+<li><strong>ランダムな図形の画像</strong>を生成 → <strong>CLIPで画像ベクトル</strong>に変換</li>
+<li><strong>遺伝的アルゴリズム</strong>で画像を進化させて、<strong>概念ベクトルに近づける</strong></li>
+<li>世代を重ねるごとに「初音ミクらしい」画像に収束</li>
+</ol>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -245,50 +194,9 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%AE%9F%E9%A8%93%E8%A8%AD%E5%AE%9A%E3%81%AE%E8%A9%B3%E7%B4%B0">実験設定の詳細</h2>
-<h3 id="%E5%9F%BA%E6%9C%AC%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF">基本パラメータ</h3>
-<table>
-<thead>
-<tr>
-<th>パラメータ</th>
-<th>値</th>
-<th>説明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>個体数</td>
-<td>40</td>
-<td>一世代の個体数</td>
-</tr>
-<tr>
-<td>遺伝子数</td>
-<td>80-1200</td>
-<td>図形の数（実験により変更）</td>
-</tr>
-<tr>
-<td>エリート数</td>
-<td>5-10</td>
-<td>次世代に残す上位個体数</td>
-</tr>
-<tr>
-<td>突然変異率</td>
-<td>0.1-0.12</td>
-<td>遺伝子変異の確率</td>
-</tr>
-<tr>
-<td>世代数</td>
-<td>20000</td>
-<td>最大進化世代数</td>
-</tr>
-</tbody>
-</table>
-<h3 id="%E4%BD%BF%E7%94%A8%E3%83%A2%E3%83%87%E3%83%AB">使用モデル</h3>
-<ul>
-<li><strong>CLIP</strong>: <code>openai/clip-vit-base-patch32</code></li>
-<li><strong>画像サイズ</strong>: 256×256ピクセル</li>
-</ul>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E3%82%A2%E3%83%AB%E3%82%B4%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%AE%E6%B5%81%E3%82%8C%E5%9B%B3">アルゴリズムの流れ図</h2>
+<p><img src="fig3.png" alt="流れ図" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -308,20 +216,21 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%AE%9F%E9%A8%931-doraemon%E7%94%9F%E6%88%90%E6%88%90%E5%8A%9F%E4%BE%8B">実験1: Doraemon生成（成功例）</h2>
-<h3 id="%E5%AE%9F%E9%A8%93%E8%A8%AD%E5%AE%9A">実験設定</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E6%A7%8B%E6%88%90">システム構成</h3>
 <ul>
-<li><strong>プロンプト</strong>: &quot;doraemon&quot;</li>
-<li><strong>遺伝子数</strong>: 80-120個の図形</li>
-<li><strong>交配戦略</strong>: エリート戦略</li>
+<li><strong>個体</strong>: 複数の図形（矩形・楕円）の組み合わせ</li>
+<li><strong>遺伝子</strong>: 各図形の位置、サイズ、色、透明度</li>
+<li><strong>適応度</strong>: CLIPによるテキスト-画像類似度スコア</li>
+<li><strong>進化</strong>: 選択、交配、突然変異</li>
 </ul>
-<h3 id="%E7%B5%90%E6%9E%9C">結果</h3>
+<h2 id="%E5%AE%9F%E9%A8%93%E8%A8%AD%E5%AE%9A%E3%81%AE%E8%A9%B3%E7%B4%B0">実験設定の詳細</h2>
+<h3 id="%E4%BD%BF%E7%94%A8%E3%83%A2%E3%83%87%E3%83%AB">使用モデル</h3>
 <ul>
-<li><strong>最高スコア</strong>: 0.3418（14626世代）</li>
-<li><strong>特徴</strong>: 青い色調と丸い形状が進化</li>
+<li><strong>CLIP</strong>: <code>openai/clip-vit-base-patch32</code></li>
+<li><strong>画像サイズ</strong>: 256×256ピクセル</li>
+<li><strong>遺伝アルゴリズム</strong>: エリートだけが子を残せる戦略、あるいは4人に1人子を残せる戦略</li>
 </ul>
-<p><img src="runs/doraemon/best/best_score_0.3418_14626.png" alt="Doraemon Results" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -341,18 +250,15 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%AE%9F%E9%A8%932-%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E7%94%9F%E6%88%907%E3%81%A4%E3%81%AE%E5%AE%9F%E9%A8%93">実験2: 初音ミク生成（7つの実験）</h2>
-<h3 id="%E5%AE%9F%E9%A8%931-%E5%9F%BA%E6%9C%AC%E8%A8%AD%E5%AE%9A">実験1: 基本設定</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E5%AE%9F%E9%A8%931-doraemon%E7%94%9F%E6%88%90">実験1: Doraemon生成</h2>
+<h3 id="%E5%AE%9F%E9%A8%93%E8%A8%AD%E5%AE%9A">実験設定</h3>
 <ul>
-<li><strong>最高スコア</strong>: 0.3501<br />
-<img src="runs/hatsune_miku/best/best_score_0.3501.png" alt="Hatsune Miku 1" /></li>
+<li><strong>プロンプト</strong>: &quot;doraemon&quot;</li>
+<li><strong>遺伝子数</strong>: 80-120個の図形</li>
+<li><strong>交配戦略</strong>: エリート戦略</li>
 </ul>
-<h3 id="%E5%AE%9F%E9%A8%932-%E5%A4%A7%E8%A6%8F%E6%A8%A1%E9%81%BA%E4%BC%9D%E5%AD%90">実験2: 大規模遺伝子</h3>
-<ul>
-<li><strong>最高スコア</strong>: 0.3589<br />
-<img src="runs/hatsune_miku_2/best/best_score_0.3589_6288.png" alt="Hatsune Miku 2" /></li>
-</ul>
+<p><img src="runs/doraemon/best/best_score_0.3418_14626.png" alt="Doraemon Results" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -372,17 +278,12 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%93%E3%81%AE%E5%85%A8%E7%B5%90%E6%9E%9C">初音ミク実験の全結果</h2>
-<h3 id="%E5%AE%9F%E9%A8%933-%E4%B8%AD%E9%96%93%E8%A8%AD%E5%AE%9A">実験3: 中間設定</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E5%AE%9F%E9%A8%932-%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E7%94%9F%E6%88%90">実験2: 初音ミク生成</h2>
+<h3 id="%E5%AE%9F%E9%A8%931-%E5%9F%BA%E6%9C%AC">実験1: 基本</h3>
 <ul>
-<li><strong>最高スコア</strong>: 0.3552<br />
-<img src="runs/hatsune_miku_3/best/best_score_0.3552_3686.png" alt="Hatsune Miku 3" /></li>
-</ul>
-<h3 id="%E5%AE%9F%E9%A8%934-%E5%A4%A7%E8%A6%8F%E6%A8%A1%E9%81%BA%E4%BC%9D%E5%AD%90">実験4: 大規模遺伝子</h3>
-<ul>
-<li><strong>最高スコア</strong>: 0.3364<br />
-<img src="runs/hatsune_miku_4_large_genes/best/best_score_0.3364_220.png" alt="Hatsune Miku 4" /></li>
+<li><strong>最高スコア</strong>: 0.3589<br />
+<img src="runs/hatsune_miku_2/best/best_score_0.3589_6288.png" alt="Hatsune Miku 2" /></li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="11" data-paginate="true" data-theme="default" data-style="section {
@@ -403,17 +304,11 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%93%E7%B6%9A%E3%81%8D">初音ミク実験（続き）</h2>
-<h3 id="%E5%AE%9F%E9%A8%935-%E5%A4%A7%E8%A6%8F%E6%A8%A1%E9%81%BA%E4%BC%9D%E5%AD%90%E6%94%B9%E8%89%AF%E6%9C%80%E9%AB%98%E3%82%B9%E3%82%B3%E3%82%A2">実験5: 大規模遺伝子改良（<strong>最高スコア</strong>）</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%AE%9F%E9%A8%932-%E7%B9%81%E6%AE%96%E6%88%A6%E7%95%A5%E3%82%92%E5%A4%9A%E6%A7%98%E6%80%A7%E9%87%8D%E8%A6%96%E3%81%AB">実験2: 繁殖戦略を多様性重視に</h3>
 <ul>
-<li><strong>最高スコア</strong>: 0.3610 <img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b50.svg" data-marp-twemoji=""/><br />
-<img src="runs/hatsune_miku_5_large_genes/best/best_score_0.3610_4877.png" alt="Hatsune Miku 5" /></li>
-</ul>
-<h3 id="%E5%AE%9F%E9%A8%936-%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88%E6%88%A6%E7%95%A5">実験6: エリート戦略</h3>
-<ul>
-<li><strong>最高スコア</strong>: 0.3489<br />
-<img src="runs/hatsune_miku_6_large_genes_elite_strategy/best/best_score_0.3489_955.png" alt="Hatsune Miku 6" /></li>
+<li><strong>最高スコア</strong>: 0.3552<br />
+<img src="runs/hatsune_miku_3/best/best_score_0.3552_3686.png" alt="Hatsune Miku 3" /></li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="12" data-paginate="true" data-theme="default" data-style="section {
@@ -434,18 +329,11 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%937-%E5%B0%8F%E8%A6%81%E7%B4%A0%E3%83%A6%E3%83%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0">初音ミク実験7: 小要素ユニフォーム</h2>
-<h3 id="%E5%AE%9F%E9%A8%937-%E5%B0%8F%E8%A6%81%E7%B4%A0%E3%83%A6%E3%83%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E4%BA%A4%E9%85%8D">実験7: 小要素+ユニフォーム交配</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%AE%9F%E9%A8%934-%E7%B9%81%E6%AE%96%E6%88%A6%E7%95%A5%E3%82%92%E5%A4%9A%E6%A7%98%E6%80%A7%E9%87%8D%E8%A6%96%E3%81%AB%E5%A4%A7%E8%A6%8F%E6%A8%A1%E9%81%BA%E4%BC%9D%E5%AD%90">実験4: 繁殖戦略を多様性重視に大規模遺伝子</h3>
 <ul>
-<li><strong>最高スコア</strong>: 0.3309<br />
-<img src="runs/hatsune_miku_2_large_genes_uniform_small_elements/best/best_score_0.3309_2649.png" alt="Hatsune Miku 7" /></li>
-</ul>
-<h3 id="%E5%85%A8%E5%AE%9F%E9%A8%93%E3%81%AE%E8%A6%B3%E5%AF%9F%E7%B5%90%E6%9E%9C">全実験の観察結果</h3>
-<ul>
-<li><strong>色彩</strong>: 緑・青系（髪色の反映）が全実験で共通</li>
-<li><strong>形状</strong>: 遺伝子数が多いほど複雑なパターン</li>
-<li><strong>進化</strong>: エリート戦略 vs ユニフォーム交配で異なる収束</li>
+<li><strong>最高スコア</strong>: 0.3364<br />
+<img src="runs/hatsune_miku_4_large_genes/best/best_score_0.3364_220.png" alt="Hatsune Miku 4" /></li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="13" data-paginate="true" data-theme="default" data-style="section {
@@ -466,21 +354,12 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%AE%9F%E9%A8%933-%E6%83%A3%E6%B5%81%E3%83%BB%E3%82%A2%E3%82%B9%E3%82%AB%E3%83%BB%E3%83%A9%E3%83%B3%E3%82%B0%E3%83%AC%E3%83%BC%E5%A4%B1%E6%95%97%E4%BE%8B">実験3: 惣流・アスカ・ラングレー（失敗例）</h2>
-<h3 id="%E5%AE%9F%E9%A8%93%E8%A8%AD%E5%AE%9A-1">実験設定</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%AE%9F%E9%A8%935-%E7%B9%81%E6%AE%96%E6%88%A6%E7%95%A5%E3%82%92%E5%A4%9A%E6%A7%98%E6%80%A7%E9%87%8D%E8%A6%96%E3%81%AB%E5%A4%A7%E8%A6%8F%E6%A8%A1%E9%81%BA%E4%BC%9D%E5%AD%90%E9%95%B7%E6%99%82%E9%96%93%E5%AE%9F%E8%A1%8C%E6%9C%80%E9%AB%98%E3%82%B9%E3%82%B3%E3%82%A2">実験5: 繁殖戦略を多様性重視に大規模遺伝子、長時間実行（<strong>最高スコア</strong>）</h3>
 <ul>
-<li><strong>プロンプト</strong>: &quot;souryuu asuka langley&quot;</li>
-<li><strong>遺伝子数</strong>: 80-120個の図形</li>
-<li><strong>交配戦略</strong>: エリート戦略</li>
+<li><strong>最高スコア</strong>: 0.3610 <img class="emoji" draggable="false" alt="⭐" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2b50.svg" data-marp-twemoji=""/><br />
+<img src="runs/hatsune_miku_5_large_genes/best/best_score_0.3610_4877.png" alt="Hatsune Miku 5" /></li>
 </ul>
-<h3 id="%E7%B5%90%E6%9E%9C%E5%A4%B1%E6%95%97">結果（失敗）</h3>
-<ul>
-<li><strong>最高スコア</strong>: 0.2944（低スコア）</li>
-<li><strong>問題</strong>: CLIPの概念ベクトルの性質による限界</li>
-<li><strong>特徴</strong>: 抽象的な表現に留まり、詳細な形状に発展せず</li>
-</ul>
-<p><img src="runs/souryuu_asuka_langley/best/best_score_0.2944_3579.png" alt="Asuka Failed" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="14" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -500,7 +379,13 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9"></section>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%AE%9F%E9%A8%936-%E5%A4%A7%E8%A6%8F%E6%A8%A1%E9%81%BA%E4%BC%9D%E5%AD%90%E3%82%A8%E3%83%AA%E3%83%BC%E3%83%88%E6%88%A6%E7%95%A5">実験6: 大規模遺伝子+エリート戦略</h3>
+<ul>
+<li><strong>最高スコア</strong>: 0.3489<br />
+<img src="runs/hatsune_miku_6_large_genes_elite_strategy/best/best_score_0.3489_955.png" alt="Hatsune Miku 6" /></li>
+</ul>
+</section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="15" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
 }
@@ -519,50 +404,14 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E5%AE%9F%E9%A8%93%E7%B5%90%E6%9E%9C%E3%81%AE%E6%AF%94%E8%BC%83">実験結果の比較</h2>
-<h3 id="%E6%88%90%E5%8A%9F%E4%BE%8B%E3%81%A8%E5%A4%B1%E6%95%97%E4%BE%8B">成功例と失敗例</h3>
-<table>
-<thead>
-<tr>
-<th>実験</th>
-<th>最高スコア</th>
-<th>結果</th>
-<th>特徴</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Doraemon</td>
-<td>0.3418</td>
-<td>成功</td>
-<td>青い色調、丸い形状</td>
-</tr>
-<tr>
-<td>初音ミク(最高)</td>
-<td>0.3610</td>
-<td>大成功</td>
-<td>緑・青系、複雑なパターン</td>
-</tr>
-<tr>
-<td>初音ミク(平均)</td>
-<td>0.3300-0.3500</td>
-<td>成功</td>
-<td>安定した高スコア</td>
-</tr>
-<tr>
-<td>アスカ</td>
-<td>0.2944</td>
-<td>失敗</td>
-<td>抽象的表現に留まる</td>
-</tr>
-</tbody>
-</table>
-<h3 id="%E5%AD%A6%E3%82%93%E3%81%A0%E3%81%93%E3%81%A8">学んだこと</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%937-%E5%B0%8F%E3%81%95%E3%81%84%E8%A6%81%E7%B4%A0%E3%82%92%E7%94%9F%E6%88%90%E3%83%A6%E3%83%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0">初音ミク実験7: 小さい要素を生成+ユニフォーム</h2>
+<h3 id="%E5%AE%9F%E9%A8%937-%E5%B0%8F%E3%81%95%E3%81%84%E8%A6%81%E7%B4%A0%E3%83%A6%E3%83%8B%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0%E4%BA%A4%E9%85%8D">実験7: 小さい要素+ユニフォーム交配</h3>
 <ul>
-<li><strong>シンプルなプロンプト</strong>が効果的</li>
-<li><strong>遺伝子数</strong>は多いほど複雑な表現が可能</li>
-<li><strong>CLIPの限界</strong>: 詳細な絵も簡単な絵も同じ概念ベクトルになるため、抽象的表現に収束しやすい</li>
+<li><strong>最高スコア</strong>: 0.3342<br />
+<img src="runs/hatsune_miku_2_large_genes_uniform_small_elements/best/best_score_0.3342_3431.jpg" alt="Hatsune Miku 7" /></li>
+<li>前研究に一番構成が近い。進化にかなり時間がかかる見込み。</li>
+<li>顔は生成されている。</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="16" data-paginate="true" data-theme="default" data-style="section {
@@ -583,12 +432,13 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E9%80%B2%E5%8C%96%E3%81%AE%E5%8F%AF%E8%A6%96%E5%8C%96gif%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">進化の可視化（GIFアニメーション）</h2>
-<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%931%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験1の進化過程</h3>
-<p><img src="hatsune_miku_evolution.gif" alt="Hatsune Miku Evolution 1" /></p>
-<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%932%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験2の進化過程</h3>
-<p><img src="hatsune_miku_2_evolution.gif" alt="Hatsune Miku Evolution 2" /></p>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%85%A8%E5%AE%9F%E9%A8%93%E3%81%AE%E8%A6%B3%E5%AF%9F%E7%B5%90%E6%9E%9C">全実験の観察結果</h3>
+<ul>
+<li><strong>色彩</strong>: 緑・青系（髪色の反映）、ツインテール、赤い髪飾りが全実験で共通</li>
+<li><strong>形状</strong>: 遺伝子数が多いほど複雑なパターン</li>
+<li><strong>進化</strong>: エリート戦略 vs ユニフォーム交配で異なる収束</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="17" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -608,12 +458,18 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E3%81%95%E3%82%89%E3%81%AA%E3%82%8B%E9%80%B2%E5%8C%96%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">さらなる進化アニメーション</h2>
-<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%933%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験3の進化過程</h3>
-<p><img src="hatsune_miku_3_evolution.gif" alt="Hatsune Miku Evolution 3" /></p>
-<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%935%E6%9C%80%E9%AB%98%E3%82%B9%E3%82%B3%E3%82%A2%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験5（最高スコア）の進化過程</h3>
-<p><img src="hatsune_miku_5_large_genes_evolution.gif" alt="Hatsune Miku Evolution 5" /></p>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E5%AE%9F%E9%A8%933-%E6%83%A3%E6%B5%81%E3%83%BB%E3%82%A2%E3%82%B9%E3%82%AB%E3%83%BB%E3%83%A9%E3%83%B3%E3%82%B0%E3%83%AC%E3%83%BC">実験3: 惣流・アスカ・ラングレー</h2>
+<h3 id="%E5%AE%9F%E9%A8%93%E8%A8%AD%E5%AE%9A-1">実験設定</h3>
+<ul>
+<li><strong>遺伝子数</strong>: 80-120個の図形</li>
+<li><strong>交配戦略</strong>: エリート戦略</li>
+</ul>
+<h3 id="%E7%B5%90%E6%9E%9C">結果</h3>
+<ul>
+<li><strong>特徴</strong>: 抽象的な表現に留まり、詳細な形状に発展せず</li>
+</ul>
+<p><img src="runs/souryuu_asuka_langley/best/best_score_0.2944_3579.png" alt="Asuka Failed" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="18" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -633,17 +489,14 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="doraemon%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">Doraemonの進化過程</h2>
-<h3 id="doraemon%E5%AE%9F%E9%A8%93%E3%81%AE%E9%80%B2%E5%8C%96%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">Doraemon実験の進化アニメーション</h3>
-<p><img src="doraemon_evolution.gif" alt="Doraemon Evolution" /></p>
-<h3 id="%E8%A6%B3%E5%AF%9F%E3%81%95%E3%82%8C%E3%81%9F%E9%80%B2%E5%8C%96%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3">観察された進化パターン</h3>
-<ol>
-<li><strong>初期</strong>: ランダムな色と形状</li>
-<li><strong>中期</strong>: プロンプトに関連する色調の出現</li>
-<li><strong>後期</strong>: 特徴的な形状の洗練化</li>
-<li><strong>収束</strong>: 局所最適解への到達</li>
-</ol>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%AD%A6%E3%82%93%E3%81%A0%E3%81%93%E3%81%A8">学んだこと</h3>
+<ul>
+<li><strong>遺伝子数</strong>は多いほど複雑な表現が可能</li>
+<li><strong>CLIPの限界</strong>: 詳細な絵も簡単な絵も同じ概念ベクトルになるため、抽象的表現に収束しやすい</li>
+<li>エリートだけが生き残れる戦略は急速に進化するが、進化が止まる。</li>
+<li>遺伝アルゴリズムは考える要素が多くて難しい。(進化戦略をどうするか、集団数をどうするか、突然変異率をどうするか)</li>
+</ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="19" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -663,14 +516,10 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E6%8A%80%E8%A1%93%E7%9A%84%E3%81%AA%E5%B7%A5%E5%A4%AB%E3%82%B3%E3%83%B3%E3%83%91%E3%82%AF%E3%83%88%E7%89%88">技術的な工夫（コンパクト版）</h2>
-<h3 id="%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E3%81%AE%E7%89%B9%E5%BE%B4">システムの特徴</h3>
-<ul>
-<li><strong>並列処理</strong>: 8ワーカー、バッチサイズ16</li>
-<li><strong>自動保存</strong>: 100世代ごと、ベスト個体追跡</li>
-<li><strong>実装</strong>: Python + CLIP + PIL</li>
-</ul>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E9%80%B2%E5%8C%96%E3%81%AE%E5%8F%AF%E8%A6%96%E5%8C%96gif%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">進化の可視化（GIFアニメーション）</h2>
+<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%931%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験1の進化過程</h3>
+<p><img src="hatsune_miku_evolution.gif" alt="Hatsune Miku Evolution 1" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="20" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -690,18 +539,9 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E7%B5%90%E6%9E%9C%E3%81%AE%E8%80%83%E5%AF%9F">結果の考察</h2>
-<h3 id="%E6%88%90%E5%8A%9F%E3%81%97%E3%81%9F%E7%82%B9">成功した点</h3>
-<p><img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>自動化</strong>: 人間の介入なしでText-to-Image生成<br />
-<img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>多様性</strong>: 従来のAIとは異なる抽象的表現<br />
-<img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>進化</strong>: 明確なスコア向上と特徴の洗練<br />
-<img class="emoji" draggable="false" alt="✅" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" data-marp-twemoji=""/> <strong>再現性</strong>: 設定による結果の制御可能</p>
-<h3 id="%E8%AA%B2%E9%A1%8C%E3%81%A8%E9%99%90%E7%95%8C">課題と限界</h3>
-<p><img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/274c.svg" data-marp-twemoji=""/> <strong>計算時間</strong>: 数千世代の進化に長時間必要<br />
-<img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/274c.svg" data-marp-twemoji=""/> <strong>CLIPの概念ベクトル</strong>: 詳細度に関係なく同じベクトルになるため抽象的表現に収束<br />
-<img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/274c.svg" data-marp-twemoji=""/> <strong>局所最適</strong>: エリート戦略での多様性の制限<br />
-<img class="emoji" draggable="false" alt="❌" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/274c.svg" data-marp-twemoji=""/> <strong>Stable Diffusionとの違い</strong>: ノイズ除去機構がないため詳細な画像生成が困難</p>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%932%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験2の進化過程</h3>
+<p><img src="hatsune_miku_2_evolution.gif" alt="Hatsune Miku Evolution 2" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="21" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -721,21 +561,9 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E4%BB%8A%E5%BE%8C%E3%81%AE%E5%B1%95%E6%9C%9B">今後の展望</h2>
-<h3 id="%E7%9F%AD%E6%9C%9F%E7%9A%84%E3%81%AA%E6%94%B9%E5%96%84">短期的な改善</h3>
-<ul>
-<li><strong>詳細度を考慮した評価</strong>: CLIPの限界を補う新しい評価手法</li>
-<li><strong>ハイブリッド手法</strong>: Stable Diffusionのノイズ除去機構との組み合わせ</li>
-<li><strong>多段階進化</strong>: 抽象→具体への段階的詳細化</li>
-</ul>
-<h3 id="%E9%95%B7%E6%9C%9F%E7%9A%84%E3%81%AA%E7%99%BA%E5%B1%95">長期的な発展</h3>
-<ul>
-<li><strong>3D画像生成</strong>: 立体的な表現への拡張</li>
-<li><strong>動画生成</strong>: 時系列での進化</li>
-<li><strong>インタラクティブ</strong>: リアルタイムでの人間との協調</li>
-<li><strong>芸術応用</strong>: デジタルアート制作支援</li>
-</ul>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%933%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験3の進化過程</h3>
+<p><img src="hatsune_miku_3_evolution.gif" alt="Hatsune Miku Evolution 3" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="22" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -755,18 +583,9 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E3%81%BE%E3%81%A8%E3%82%81">まとめ</h2>
-<h3 id="%E6%9C%AC%E7%A0%94%E7%A9%B6%E3%81%AE%E8%B2%A2%E7%8C%AE">本研究の貢献</h3>
-<ol>
-<li><strong>新しいアプローチ</strong>: 遺伝的アルゴリズム×CLIPによるText-to-Image</li>
-<li><strong>自動化の実現</strong>: 人間評価からAI評価への転換</li>
-<li><strong>多様性の創出</strong>: 既存AIとは異なる表現の獲得</li>
-<li><strong>実証実験</strong>: 複数のプロンプトでの有効性確認</li>
-</ol>
-<h3 id="%E5%8F%82%E8%80%83%E7%A0%94%E7%A9%B6%E3%81%B8%E3%81%AE%E6%95%AC%E6%84%8F">参考研究への敬意</h3>
-<p><a href="https://gamingchahan.com/ecchi/">遺伝的アルゴリズムで最高にエッチな画像を作ろう！</a>の発想を基に、<br />
-<strong>CLIPによる自動評価</strong>という新しい展開を実現</p>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF%E5%AE%9F%E9%A8%935%E6%9C%80%E9%AB%98%E3%82%B9%E3%82%B3%E3%82%A2%E3%81%AE%E9%80%B2%E5%8C%96%E9%81%8E%E7%A8%8B">初音ミク実験5（最高スコア）の進化過程</h3>
+<p><img src="hatsune_miku_5_large_genes_evolution.gif" alt="Hatsune Miku Evolution 5" /></p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="23" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -786,17 +605,16 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E8%B3%AA%E7%96%91%E5%BF%9C%E7%AD%94">質疑応答</h2>
-<h3 id="%E3%82%88%E3%81%8F%E3%81%82%E3%82%8B%E8%B3%AA%E5%95%8F">よくある質問</h3>
-<p><strong>Q</strong>: なぜStable Diffusionを使わないのか？<br />
-<strong>A</strong>: より多様で予測不可能な表現を求めるため</p>
-<p><strong>Q</strong>: 計算時間はどの程度？<br />
-<strong>A</strong>: 数時間〜数日（設定と世代数による）</p>
-<p><strong>Q</strong>: 実用性は？<br />
-<strong>A</strong>: 芸術制作、デザインの発想支援として有効</p>
-<h3 id="%E9%80%A3%E7%B5%A1%E5%85%88">連絡先</h3>
-<p>プロジェクトリポジトリ: <code>/home/arithmer/project/generic-paint/</code></p>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h3 id="doraemon%E5%AE%9F%E9%A8%93%E3%81%AE%E9%80%B2%E5%8C%96%E3%82%A2%E3%83%8B%E3%83%A1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">Doraemon実験の進化アニメーション</h3>
+<p><img src="doraemon_evolution.gif" alt="Doraemon Evolution" /></p>
+<h3 id="%E8%A6%B3%E5%AF%9F%E3%81%95%E3%82%8C%E3%81%9F%E9%80%B2%E5%8C%96%E3%83%91%E3%82%BF%E3%83%BC%E3%83%B3">観察された進化パターン</h3>
+<ol>
+<li><strong>初期</strong>: ランダムな色と形状</li>
+<li><strong>中期</strong>: プロンプトに関連する色調の出現</li>
+<li><strong>後期</strong>: 特徴的な形状の洗練化</li>
+<li><strong>収束</strong>: 局所最適解への到達</li>
+</ol>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="24" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -816,25 +634,16 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E8%A3%9C%E8%B6%B3%E8%B3%87%E6%96%99">補足資料</h2>
-<h3 id="%E5%AE%9F%E9%A8%93%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A9%B3%E7%B4%B0">実験結果の詳細</h3>
-<ul>
-<li><strong>Doraemon</strong>: 20000世代、最高スコア0.3418（成功）</li>
-<li><strong>初音ミク</strong>: 7回の実験、最高スコア0.3610（大成功）</li>
-<li><strong>アスカ</strong>: 5000世代、最高スコア0.2944（失敗）</li>
-</ul>
-<h3 id="%E8%A8%AD%E5%AE%9A%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E4%BE%8B">設定ファイル例</h3>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-yaml"><span class="hljs-attr">ga:</span>
-  <span class="hljs-attr">pop_size:</span> <span class="hljs-number">40</span>
-  <span class="hljs-attr">genes_min:</span> <span class="hljs-number">80</span>
-  <span class="hljs-attr">genes_max:</span> <span class="hljs-number">120</span>
-  <span class="hljs-attr">elitism:</span> <span class="hljs-number">5</span>
-  <span class="hljs-attr">mutation_rate:</span> <span class="hljs-number">0.1</span>
-<span class="hljs-attr">model:</span>
-  <span class="hljs-attr">prompts:</span> [<span class="hljs-string">&quot;doraemon&quot;</span>]
-  <span class="hljs-attr">model:</span> <span class="hljs-string">&quot;openai/clip-vit-base-patch32&quot;</span>
-</code></pre>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="%E7%B5%90%E6%9E%9C%E3%81%AE%E8%80%83%E5%AF%9F">結果の考察</h2>
+<h3 id="%E6%88%90%E5%8A%9F%E3%81%97%E3%81%9F%E7%82%B9">成功した点</h3>
+<p><strong>自動化</strong>: 人間の介入なしでText-to-Image生成<br />
+<strong>多様性</strong>: 従来のAIとは異なる抽象的表現<br />
+<strong>進化</strong>: 明確なスコア向上と特徴の洗練</p>
+<h3 id="%E8%AA%B2%E9%A1%8C%E3%81%A8%E9%99%90%E7%95%8C">課題と限界</h3>
+<p><strong>計算時間</strong>: 数千世代の進化に長時間必要(最低一時間ぐらい)<br />
+<strong>CLIPの概念ベクトル</strong>: 詳細度に関係なく同じベクトルになるため抽象的表現に収束<br />
+<strong>Stable Diffusionとの違い</strong>: ノイズ除去機構がないため詳細な画像生成が困難</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-theme="default" data-style="section {
   font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
@@ -854,16 +663,36 @@ h1 {
 h2 {
   color: #1e40af;
 }
-;" data-marpit-pagination-total="25" data-size="16:9">
-<h2 id="%E6%84%9F%E6%83%B3">感想</h2>
-<h3 id="aiclaude%E3%81%8B%E3%82%89%E3%81%AE%E6%84%9F%E6%83%B3">AI（Claude）からの感想</h3>
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="aiclaude%E3%81%8B%E3%82%89%E3%81%AE%E6%84%9F%E6%83%B3">AI（Claude）からの感想</h2>
 <p>この研究に関わらせていただき、AI研究の本質について深く考えさせられました。</p>
 <p><strong>CLIPの概念ベクトルの洞察</strong>：「詳細な絵も簡単な絵も同じ概念ベクトルになる」という指摘は、まさに核心を突いています。CLIPは意味的類似度は捉えられても、視覚的詳細度は区別できない。これがアスカ実験の失敗の真因だったのですね。</p>
 <p><strong>Stable Diffusionとの本質的違い</strong>：ノイズ除去機構という「詳細化のメカニズム」を持つStable Diffusionと、概念ベクトルのみに依存する本手法の違いが鮮明になりました。これは単なる技術的差異ではなく、画像生成の哲学的違いです。</p>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-theme="default" data-style="section {
+  font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+}
+h1 {
+  color: #2563eb;
+}
+h2 {
+  color: #1e40af;
+}
+" lang="ja-JP" data-marpit-pagination="26" style="--paginate:true;--theme:default;--style:section {
+  font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+}
+h1 {
+  color: #2563eb;
+}
+h2 {
+  color: #1e40af;
+}
+;" data-marpit-pagination-total="26" data-size="16:9">
+<h2 id="aiclaude%E3%81%8B%E3%82%89%E3%81%AE%E6%84%9F%E6%83%B3%E7%B6%9A%E3%81%8D">AI（Claude）からの感想続き</h2>
 <p><strong>抽象芸術としての価値</strong>：しかし、この「限界」こそが本手法の独自性かもしれません。写実性を追求するのではなく、概念の抽象的表現として捉えれば、初音ミクの緑と青への収束は美しい「概念の結晶化」です。</p>
 <p><strong>研究の意義の再認識</strong>：この研究は「Stable Diffusionの代替」ではなく、「概念ベクトルによる抽象芸術生成」という新しいジャンルを開拓したのだと思います。</p>
-<p>AIの限界を知ることで、逆にその可能性が見えてくる。素晴らしい研究でした。</p>
-<p><strong>署名</strong>: あなた（Claude Sonnet 3.5）</p>
+<p>AIの限界を知ることで、逆にその可能性が見えてくる。素晴らしい研究でした。<br />
+<strong>署名</strong>: Claude Sonnet 3.5</p>
 </section>
 <script>!function(){"use strict";const t={h1:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"1"},style:"display: block; font-size: 2em; margin-block-start: 0.67em; margin-block-end: 0.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h2:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"2"},style:"display: block; font-size: 1.5em; margin-block-start: 0.83em; margin-block-end: 0.83em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h3:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"3"},style:"display: block; font-size: 1.17em; margin-block-start: 1em; margin-block-end: 1em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h4:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"4"},style:"display: block; margin-block-start: 1.33em; margin-block-end: 1.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h5:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"5"},style:"display: block; font-size: 0.83em; margin-block-start: 1.67em; margin-block-end: 1.67em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},h6:{proto:()=>HTMLHeadingElement,attrs:{role:"heading","aria-level":"6"},style:"display: block; font-size: 0.67em; margin-block-start: 2.33em; margin-block-end: 2.33em; margin-inline-start: 0px; margin-inline-end: 0px; font-weight: bold;"},span:{proto:()=>HTMLSpanElement},pre:{proto:()=>HTMLElement,style:"display: block; font-family: monospace; white-space: pre; margin: 1em 0; --marp-auto-scaling-white-space: pre;"}},e="data-marp-auto-scaling-wrapper",i="data-marp-auto-scaling-svg",n="data-marp-auto-scaling-container";class s extends HTMLElement{container;containerSize;containerObserver;svg;svgComputedStyle;svgPreserveAspectRatio="xMinYMid meet";wrapper;wrapperSize;wrapperObserver;constructor(){super();const t=t=>([e])=>{const{width:i,height:n}=e.contentRect;this[t]={width:i,height:n},this.updateSVGRect()};this.attachShadow({mode:"open"}),this.containerObserver=new ResizeObserver(t("containerSize")),this.wrapperObserver=new ResizeObserver(((...e)=>{t("wrapperSize")(...e),this.flushSvgDisplay()}))}static get observedAttributes(){return["data-downscale-only"]}connectedCallback(){this.shadowRoot.innerHTML=`\n<style>\n  svg[${i}] { display: block; width: 100%; height: auto; vertical-align: top; }\n  span[${n}] { display: table; white-space: var(--marp-auto-scaling-white-space, nowrap); width: max-content; }\n</style>\n<div ${e}>\n  <svg part="svg" ${i}>\n    <foreignObject><span ${n}><slot></slot></span></foreignObject>\n  </svg>\n</div>\n    `.split(/\n\s*/).join(""),this.wrapper=this.shadowRoot.querySelector(`div[${e}]`)??void 0;const t=this.svg;this.svg=this.wrapper?.querySelector(`svg[${i}]`)??void 0,this.svg!==t&&(this.svgComputedStyle=this.svg?window.getComputedStyle(this.svg):void 0),this.container=this.svg?.querySelector(`span[${n}]`)??void 0,this.observe()}disconnectedCallback(){this.svg=void 0,this.svgComputedStyle=void 0,this.wrapper=void 0,this.container=void 0,this.observe()}attributeChangedCallback(){this.observe()}flushSvgDisplay(){const{svg:t}=this;t&&(t.style.display="inline",requestAnimationFrame((()=>{t.style.display=""})))}observe(){this.containerObserver.disconnect(),this.wrapperObserver.disconnect(),this.wrapper&&this.wrapperObserver.observe(this.wrapper),this.container&&this.containerObserver.observe(this.container),this.svgComputedStyle&&this.observeSVGStyle(this.svgComputedStyle)}observeSVGStyle(t){const e=()=>{const i=(()=>{const e=t.getPropertyValue("--preserve-aspect-ratio");if(e)return e.trim();return`x${(({textAlign:t,direction:e})=>{if(t.endsWith("left"))return"Min";if(t.endsWith("right"))return"Max";if("start"===t||"end"===t){let i="rtl"===e;return"end"===t&&(i=!i),i?"Max":"Min"}return"Mid"})(t)}YMid meet`})();i!==this.svgPreserveAspectRatio&&(this.svgPreserveAspectRatio=i,this.updateSVGRect()),t===this.svgComputedStyle&&requestAnimationFrame(e)};e()}updateSVGRect(){let t=Math.ceil(this.containerSize?.width??0);const e=Math.ceil(this.containerSize?.height??0);void 0!==this.dataset.downscaleOnly&&(t=Math.max(t,this.wrapperSize?.width??0));const i=this.svg?.querySelector(":scope > foreignObject");if(i?.setAttribute("width",`${t}`),i?.setAttribute("height",`${e}`),this.svg&&(this.svg.setAttribute("viewBox",`0 0 ${t} ${e}`),this.svg.setAttribute("preserveAspectRatio",this.svgPreserveAspectRatio),this.svg.style.height=t<=0||e<=0?"0":""),this.container){const t=this.svgPreserveAspectRatio.toLowerCase();this.container.style.marginLeft=t.startsWith("xmid")||t.startsWith("xmax")?"auto":"0",this.container.style.marginRight=t.startsWith("xmi")?"auto":"0"}}}const r=(t,{attrs:e={},style:i})=>class extends t{constructor(...t){super(...t);for(const[t,i]of Object.entries(e))this.hasAttribute(t)||this.setAttribute(t,i);this._shadow()}static get observedAttributes(){return["data-auto-scaling"]}connectedCallback(){this._update()}attributeChangedCallback(){this._update()}_shadow(){if(!this.shadowRoot)try{this.attachShadow({mode:"open"})}catch(t){if(!(t instanceof Error&&"NotSupportedError"===t.name))throw t}return this.shadowRoot}_update(){const t=this._shadow();if(t){const e=i?`<style>:host { ${i} }</style>`:"";let n="<slot></slot>";const{autoScaling:s}=this.dataset;if(void 0!==s){n=`<marp-auto-scaling exportparts="svg:auto-scaling" ${"downscale-only"===s?"data-downscale-only":""}>${n}</marp-auto-scaling>`}t.innerHTML=e+n}}};let o;const a=Symbol();let l;const c="marpitSVGPolyfill:setZoomFactor,",d=Symbol(),h=Symbol();const g=()=>{const t="Apple Computer, Inc."===navigator.vendor,e=t?[u]:[],i={then:e=>(t?(async()=>{if(void 0===l){const t=document.createElement("canvas");t.width=10,t.height=10;const e=t.getContext("2d"),i=new Image(10,10),n=new Promise((t=>{i.addEventListener("load",(()=>t()))}));i.crossOrigin="anonymous",i.src="data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%201%201%22%3E%3CforeignObject%20width%3D%221%22%20height%3D%221%22%20requiredExtensions%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%3E%3Cdiv%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxhtml%22%20style%3D%22width%3A%201px%3B%20height%3A%201px%3B%20background%3A%20red%3B%20position%3A%20relative%22%3E%3C%2Fdiv%3E%3C%2FforeignObject%3E%3C%2Fsvg%3E",await n,e.drawImage(i,0,0),l=e.getImageData(5,5,1,1).data[3]<128}return l})().then((t=>{null==e||e(t?[u]:[])})):null==e||e([]),i)};return Object.assign(e,i)};let p,m;function u(t){const e="object"==typeof t&&t.target||document,i="object"==typeof t?t.zoom:t;window[h]||(Object.defineProperty(window,h,{configurable:!0,value:!0}),document.body.style.zoom=1.0001,document.body.offsetHeight,document.body.style.zoom=1,window.addEventListener("message",(({data:t,origin:e})=>{if(e===window.origin)try{if(t&&"string"==typeof t&&t.startsWith(c)){const[,e]=t.split(","),i=Number.parseFloat(e);Number.isNaN(i)||(m=i)}}catch(t){console.error(t)}})));let n=!1;Array.from(e.querySelectorAll("svg[data-marpit-svg]"),(t=>{var e,s,r,o;t.style.transform||(t.style.transform="translateZ(0)");const a=i||m||t.currentScale||1;p!==a&&(p=a,n=a);const l=t.getBoundingClientRect(),{length:c}=t.children;for(let i=0;i<c;i+=1){const n=t.children[i];if(n.getScreenCTM){const t=n.getScreenCTM();if(t){const i=null!==(s=null===(e=n.x)||void 0===e?void 0:e.baseVal.value)&&void 0!==s?s:0,c=null!==(o=null===(r=n.y)||void 0===r?void 0:r.baseVal.value)&&void 0!==o?o:0,d=n.children.length;for(let e=0;e<d;e+=1){const s=n.children[e];if("SECTION"===s.tagName){const{style:e}=s;e.transformOrigin||(e.transformOrigin=`${-i}px ${-c}px`),e.transform=`scale(${a}) matrix(${t.a}, ${t.b}, ${t.c}, ${t.d}, ${t.e-l.left}, ${t.f-l.top}) translateZ(0.0001px)`;break}}}}}})),!1!==n&&Array.from(e.querySelectorAll("iframe"),(({contentWindow:t})=>{null==t||t.postMessage(`${c}${n}`,"null"===window.origin?"*":window.origin)}))}function v({once:t=!1,target:e=document}={}){const i=function(t=document){if(t[d])return t[d];let e=!0;const i=()=>{e=!1,delete t[d]};Object.defineProperty(t,d,{configurable:!0,value:i});let n=[],s=!1;(async()=>{try{n=await g()}finally{s=!0}})();const r=()=>{for(const e of n)e({target:t});s&&0===n.length||e&&window.requestAnimationFrame(r)};return r(),i}(e);return t?(i(),()=>{}):i}p=1,m=void 0;const w=Symbol(),b=(e=document)=>{if("undefined"==typeof window)throw new Error("Marp Core's browser script is valid only in browser context.");if(((e=document)=>{const i=window[a];i||customElements.define("marp-auto-scaling",s);for(const n of Object.keys(t)){const s=`marp-${n}`,a=t[n].proto();(o??(o=!!document.createElement("div",{is:"marp-auto-scaling"}).outerHTML.startsWith("<div is"),o))&&a!==HTMLElement?i||customElements.define(s,r(a,{style:t[n].style}),{extends:n}):(i||customElements.define(s,r(HTMLElement,t[n])),e.querySelectorAll(`${n}[is="${s}"]`).forEach((t=>{t.outerHTML=t.outerHTML.replace(new RegExp(`^<${n}`,"i"),`<${s}`).replace(new RegExp(`</${n}>$`,"i"),`</${s}>`)})))}window[a]=!0})(e),e[w])return e[w];const i=v({target:e}),n=()=>{i(),delete e[w]},l=Object.assign(n,{cleanup:n,update:()=>b(e)});return Object.defineProperty(e,w,{configurable:!0,value:l}),l},y=document.currentScript;b(y?y.getRootNode():document)}();
 </script></foreignObject></svg></div><script>/*!! License: https://unpkg.com/@marp-team/marp-cli@4.2.3/lib/bespoke.js.LICENSE.txt */
