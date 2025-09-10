@@ -5,21 +5,20 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi>=0.116.1",
+    "fastapi>=0.100.0",
     "imageio",
     "jupyter",
     "matplotlib",
     "nbconvert",
-    "numpy>=2.3.2",
-    "pillow>=11.3.0",
+    "numpy>=1.21.0,<2.2.0",
+    "pillow>=10.0.0",
     "plotly",
     "seaborn",
-    "torch>=2.8.0",
-    "torchvision>=0.23.0",
-    "tqdm>=4.67.1",
-    "transformers>=4.56.0",
-    "uvicorn>=0.35.0",
+    "tqdm>=4.60.0",
+    "transformers>=4.40.0",
+    "uvicorn>=0.20.0",
+    "pyyaml",
+    "deap",
+    "torch",
+    "torchvision",
 ]
-
-[[tool.uv.index]]
-url = "https://download.pytorch.org/whl/cu124"

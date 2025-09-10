@@ -11,7 +11,7 @@ ga:
   mutation_rate: 0.12             # 突然変異確率 (各遺伝子パラメータ)
   add_gene_prob: 0.1             # 遺伝子追加確率 
   remove_gene_prob: 0.1          # 遺伝子削除確率 
-  crossover: "uniform"     # 交配戦略 elite_strategy or uniform
+  crossover: "elite_strategy"     # 交配戦略 elite_strategy or uniform
   seed: null                      # 乱数シード (nullの場合はunix timeから自動生成)
 
 # 描画設定
@@ -23,7 +23,7 @@ render:
 run:
   generations: 20000               # 世代数 (他の記事では2000世代)
   save_top_k: 6                   # 保存する上位個体数
-  out_dir: "runs/hatsune_miku_2_large_genes_uniform_small_elements"            # 出力ディレクトリ
+  out_dir: "runs/GOD"            # 出力ディレクトリ
   batch_size: 16                  # バッチサイズ
   render_workers: 8               # レンダリング並列ワーカー数
   save_freq: 100                  # 保存頻度 (N世代毎)
@@ -33,7 +33,7 @@ run:
 # モデル設定
 model:
   prompts:                        # CLIPプロンプト
-    - "hatsune miku"
+    - "GOD"
   model: "openai/clip-vit-base-patch32"  # CLIPモデル
   dummy: false                    # ダミースコアラー使用
   device: null                    # デバイス (null=自動選択)

@@ -65,8 +65,8 @@ class Gene:
     @staticmethod
     def random(rng: random.Random) -> "Gene":
         # 要素の大きさを指定している
-        w = max(0.01, rng.random() ** 2) * 0.1
-        h = max(0.01, rng.random() ** 2) * 0.1
+        w = max(0.01, rng.random() ** 2) * 0.9
+        h = max(0.01, rng.random() ** 2) * 0.9
         return Gene(
             shape_type=rng.choice(SHAPE_TYPES),
             x=rng.random(),
